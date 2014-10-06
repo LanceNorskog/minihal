@@ -1,0 +1,28 @@
+test
+ given blob class, supply to EL type
+ fetch:
+   top level
+   array lookup
+   iterate array members as callable iterator
+ supply request.param list to EL as 'request'
+
+ annotation implementation
+ dynamic proxy test
+   parse annotations and prepare request & response objects supplied to EL
+   simple action w/o EL, top and embedded
+   actions w EL at lop and embedded
+ all actions after method, nothing before, so possible to test in Groovy and Scala
+ two variants: get an object, parse a string, need two code bases to iterate structure.
+ supply EL data from 'request' and 'response'. don't need q= from response to create another search link
+
+
+
+decide
+  which el engine to use
+  how to supply params and response to EL in type-safe way
+  need to get array and feed parts to EL in embedded
+  need class?
+  two options: get class or json blob or both?
+      class first, then blob. or just ignore blob because needs dual implementation
+
+

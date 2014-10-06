@@ -1,1 +1,80 @@
-Base library & annotation wrapper
+Base library & annotation wrapper for MiniHAL project.
+
+MiniHAL is a basic implementation of the HAL hyperlink standard for Java. The current spec:
+https://tools.ietf.org/html/draft-kelly-json-hal-06
+
+A ReST application knows what its HTTP API does, so why should the application also know?
+HAL allows the application to export basic (obvious) uses of the API with a return value for a given request.
+For example, a search engine returns a list of N results for a keyword search. With HAL, the engine can also
+export a link named 'next' to the UI. The UI then uses this link for a 'Next N results' button.
+This allows the UI to not embed code for how to create the 'Next' link.
+
+MiniHAL adds two blocks of JSON to a returned json,
+_links: a list of top-level links for the request and common navigation options for the request, and
+_embedded: an (optional) list of links for a table of items returned by the request.
+PLACEHOLDER UNTIL SOFTWARE PROVIDES COHERENT EXAMPLE:
+
+     "_links": {
+       "self": { "href": "/orders" },
+       "next": { "href": "/orders?page=2" },
+     }
+
+     "_embedded": {
+       "orders": [{
+           "_links": {
+             "self": { "href": "/orders/123" },
+             "basket": { "href": "/baskets/98712" },
+             "customer": { "href": "/customers/7809" }
+           },
+          },{
+           "_links": {
+             "self": { "href": "/orders/124" },
+             "basket": { "href": "/baskets/97213" },
+             "customer": { "href": "/customers/12369" }
+           },
+        }]
+     },
+     "orders":[{
+         "order": "123",
+         "basket": "98712",
+         "customer": "7809",
+         "total": 30.00,
+         "currency": "USD",
+         "status": "shipped",
+     },{
+         "order": "124",
+         "basket": "98713",
+         "customer": "12369",
+         "total": 20.00,
+         "currency": "USD",
+         "status": "processing"
+     }],
+     "currentlyProcessing": 14,
+     "shippedToday": 20
+   }
+
+MiniHAL specifies these links with text specifiers only. There is no ability to supply code to implement the additions.
+
+Specification format:
+rel:/path or rel:title:/path
+where title does not start with a /. It could use the %xxx code for /.
+What is in front of /path?
+
+@Links(
+    @Link(rel="self",href="/orders",title="Orders", {more attribute pairs as simple string array}),...)
+@Embedded(elpath="${a.b[]}", links={
+    @Link(rel="self",href="/path/order/${order}", ... }
+    includeData = true
+    )
+)
+
+Sample specs for Solr search engine:
+{rel = "first",href= "/search/q=${request.q}&start=0"&${request.rows}
+{rel="prev",href= "/search/q=${request.q}&start="${request.start- request.rows"}
+{rel="next",href= "/search/q=${request.q}&start="${request.start+ request.rows"}
+{rel="last", href="/search/q=${request.q}&start="10000000000"&rows=${request.rows}}
+
+
+embedded: use ${response.results} {
+[{title="${name}", href="${link}"
+}
