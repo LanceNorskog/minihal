@@ -24,5 +24,5 @@ decide
   need class?
   two options: get class or json blob or both?
       class first, then blob. or just ignore blob because needs dual implementation
-
+  SecurityManager for EL?
 

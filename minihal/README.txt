@@ -62,7 +62,7 @@ What is in front of /path?
 
 @Links(
     @Link(rel="self",href="/orders",title="Orders", {more attribute pairs as simple string array}),...)
-@Embedded(elpath="${a.b[]}", links={
+@Embedded(item="${a.b}", links={
     @Link(rel="self",href="/path/order/${order}", ... }
     includeData = true
     )
@@ -76,5 +76,10 @@ Sample specs for Solr search engine:
 
 
 embedded: use ${response.results} {
-[{title="${name}", href="${link}"
+[{title="${... item.title ...}", href="${... item.url ...}"]
 }
+
+EL spec:
+three variables: request, response and item. item is the row item found by the embedded search path.
+item can be an object, Map or an array of items. it cannot be a base type.
+ELs are run under a SecurityManager object.
