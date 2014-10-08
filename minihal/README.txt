@@ -69,11 +69,13 @@ What is in front of /path?
 )
 
 Sample specs for Solr search engine:
-{rel = "first",href= "/search/q=${request.q}&start=0"&${request.rows}
-{rel="prev",href= "/search/q=${request.q}&start="${request.start- request.rows"}
-{rel="next",href= "/search/q=${request.q}&start="${request.start+ request.rows"}
-{rel="last", href="/search/q=${request.q}&start="10000000000"&rows=${request.rows}}
+{rel = "first",href= "/search/q=${request.q}&start=0"&${response.rows}
+{rel="prev",href= "/search/q=${request.q}&start="${response.start- response.rows"}
+{rel="next",href= "/search/q=${request.q}&start="${response.start+ response.rows"}
+{rel="last", href="/search/q=${request.q}&start="10000000000"&rows=${response.rows}}
 
+Note: start and rows can be the defaults and not included in the params,
+so must be included in the return object so that the evals can find them.
 
 embedded: use ${response.results} {
 [{title="${... item.title ...}", href="${... item.url ...}"]

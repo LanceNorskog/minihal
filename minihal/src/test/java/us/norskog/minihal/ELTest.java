@@ -39,21 +39,48 @@ public class ELTest {
     }
 
     @Test
-    public void items() {
+    public void getItems() {
         base.setTypes(request, response, item);
         base.setVars(request, response, item);
-        Collection<Object> items = base.getItems("${response.itemList}");
+        Collection<Object> items = base.getItems("${response.itemArray}");
         Assert.assertNotNull(items);
         Iterator<Object> iter = items.iterator();
-        Assert.assertEquals("A1", iter.next().toString());
-        Assert.assertEquals("A1", iter.next().toString());
+        Assert.assertEquals("A1", ((Item) iter.next()).getValue().toString());
+        Assert.assertEquals("A2", ((Item) iter.next()).getValue().toString());
         Assert.assertFalse(iter.hasNext());
-        items = base.getItems("${response.itemArray");
+        items = base.getItems("${response.itemList}");
         Assert.assertNotNull(items);
         iter = items.iterator();
-        Assert.assertEquals("B1", iter.next().toString());
-        Assert.assertEquals("B2", iter.next().toString());
+        Assert.assertEquals("B1", ((Item) iter.next()).getValue().toString());
+        Assert.assertEquals("B2", ((Item) iter.next()).getValue().toString());
         Assert.assertFalse(iter.hasNext());
+    }
+
+    @Test
+    public void fetchItems() {
+        base.setTypes(request, response, item);
+        base.setVars(request, response, item);
+        Collection<Object> items = base.getItems("${response.itemArray}");
+        Assert.assertNotNull(items);
+        Iterator<Object> iter = items.iterator();
+        base.setVars(request, response, iter.next());
+        String a = base.evalExpr("${item.value}");
+        Assert.assertEquals("A1", a);
+        base.setVars(request, response, iter.next());
+        a = base.evalExpr("${item.value}");
+        Assert.assertEquals("A2", a);
+        Assert.assertFalse(iter.hasNext());
+        items = base.getItems("${response.itemList}");
+        Assert.assertNotNull(items);
+        iter = items.iterator();
+        base.setVars(request, response, iter.next());
+        String b = base.evalExpr("${item.value}");
+        Assert.assertEquals("B1", b);
+        base.setVars(request, response, iter.next());
+        b = base.evalExpr("${item.value}");
+        Assert.assertEquals("B2", b);
+        Assert.assertFalse(iter.hasNext());
+
     }
 }
 

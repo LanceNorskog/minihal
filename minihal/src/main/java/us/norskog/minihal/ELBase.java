@@ -23,9 +23,6 @@ public class ELBase {
 
     private ExpressionFactory factory;
     private SimpleContext context;
-    private Object request;
-    private Object response;
-    private Object item;
     private ValueExpression requestValue;
     private ValueExpression responseValue;
     private ValueExpression itemValue;
@@ -40,13 +37,16 @@ public class ELBase {
         context = new SimpleContext(new SimpleResolver());
         requestValue = factory.createValueExpression(context, "#{request}", request.getClass());
         responseValue = factory.createValueExpression(context, "#{response}", response.getClass());
-        itemValue = factory.createValueExpression(context, "#{item}", item.getClass());
+        if (item != null)
+             itemValue = factory.createValueExpression(context, "#{item}", item.getClass());
     }
 
+    // TODO: maybe split setting request/response and item to minimize.
     public Object setVars(Object request, Object response, Object item) {
         requestValue.setValue(context, request);
         responseValue.setValue(context, response);
-        itemValue.setValue(context, item);
+        if (item != null)
+            itemValue.setValue(context, item);
         return null;
     }
 
