@@ -1,6 +1,7 @@
 package us.norskog.minihal;
 
-import junit.framework.Assert;
+
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -16,11 +17,15 @@ public class ParserTest {
     @Test
     public void parseSimple() {
         Parser p = new Parser("/abc");
-        p.setTypes(Request.class, Response.class);
-        Request req = new Request();
-        Response resp = new Response();
-        String simple = p.evaluate(req, resp, null);
-        Assert.assertEquals("/abc", simple);
+        List<Object> parts = p.getParts();
+        Assert.assertEquals(1, parts.size());
+        Assert.assertEquals("/abc", parts.get(0));
+    }
+
+    @Test
+    public void parse1Expr() {
+        Parser p = new Parser("${request.q}");
+
     }
 
 
