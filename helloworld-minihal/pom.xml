@@ -51,9 +51,9 @@
         <version>2.13</version>
     </parent>
 
-    <artifactId>helloworld-webapp</artifactId>
+    <artifactId>helloworld-minihal</artifactId>
     <packaging>war</packaging>
-    <name>jersey-examples-helloworld-webapp</name>
+    <name>helloworld-minihal</name>
 
     <description>Jersey annotated resource class "Hello world" example.</description>
 
@@ -67,6 +67,12 @@
         <dependency>
             <groupId>org.glassfish.jersey.containers</groupId>
             <artifactId>jersey-container-grizzly2-servlet</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>us.norskog.minihal</groupId>
+            <artifactId>minihal</artifactId>
+            <version>1.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
 
