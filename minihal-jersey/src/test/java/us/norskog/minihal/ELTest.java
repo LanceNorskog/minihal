@@ -28,7 +28,7 @@ public class ELTest {
 
     @Test
     public void requests() {
-        base.setTypes(request, response, item);
+        base.setTypes(request.getClass(), response.getClass(), item.getClass());
         base.setVars(request, response, item);
         String abc = base.evalExpr("${abc}");
         Assert.assertEquals("null", abc);
@@ -40,7 +40,7 @@ public class ELTest {
 
     @Test
     public void getItems() {
-        base.setTypes(request, response, item);
+        base.setTypes(request.getClass(), response.getClass(), item.getClass());
         base.setVars(request, response, item);
         Collection<Object> items = base.getItems("${response.itemArray}");
         Assert.assertNotNull(items);
@@ -58,7 +58,7 @@ public class ELTest {
 
     @Test
     public void fetchItems() {
-        base.setTypes(request, response, item);
+        base.setTypes(request.getClass(), response.getClass(), item.getClass());
         base.setVars(request, response, item);
         Collection<Object> items = base.getItems("${response.itemArray}");
         Assert.assertNotNull(items);
@@ -82,40 +82,50 @@ public class ELTest {
         Assert.assertFalse(iter.hasNext());
 
     }
-}
 
-class Request {
-    public Map<String,String> getParams() {
-        Map<String,String> params = new HashMap<String, String>();
-        params.put("q", "monkeys");
-        params.put("rows", "10");
-        return params;
-    }
-}
 
-class Response {
-
-    public String getQ() {return "monkeys";}
-    public String getRows() {return "10";}
-    public Item[] getItemArray() {
-        Item[] items = {new Item("A1"), new Item("A2")};
-        return items;
-    }
-    public List<Item> getItemList() {
-        List<Item> list = new ArrayList<Item>();
-        list.add(new Item("B1"));
-        list.add(new Item("B2"));
-        return list;
-    }
-}
-
-class Item {
-    private final String value;
-    public Item(String value) {
-        this.value = value;
+    class Request {
+        public Map<String, String> getParams() {
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("q", "monkeys");
+            params.put("rows", "10");
+            return params;
+        }
     }
 
-    public String getValue() {
-        return value;
+    class Response {
+
+        public String getQ() {
+            return "monkeys";
+        }
+
+        public String getRows() {
+            return "10";
+        }
+
+        public Item[] getItemArray() {
+            Item[] items = {new Item("A1"), new Item("A2")};
+            return items;
+        }
+
+        public List<Item> getItemList() {
+            List<Item> list = new ArrayList<Item>();
+            list.add(new Item("B1"));
+            list.add(new Item("B2"));
+            return list;
+        }
     }
+
+    class Item {
+        private final String value;
+
+        public Item(String value) {
+            this.value = value;
+        }
+
+        public String getValue() {
+            return value;
+        }
+    }
+
 }

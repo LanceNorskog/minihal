@@ -32,13 +32,13 @@ public class ELBase {
          factory = new de.odysseus.el.ExpressionFactoryImpl();
     }
 
-    public void setTypes(Object request, Object response, Object item) {
+    public void setTypes(Class requestClass, Class responseClass, Class itemClass) {
         // cache request, response, item
         context = new SimpleContext(new SimpleResolver());
-        requestValue = factory.createValueExpression(context, "#{request}", request.getClass());
-        responseValue = factory.createValueExpression(context, "#{response}", response.getClass());
-        if (item != null)
-             itemValue = factory.createValueExpression(context, "#{item}", item.getClass());
+        requestValue = factory.createValueExpression(context, "#{request}", requestClass);
+        responseValue = factory.createValueExpression(context, "#{response}", responseClass);
+        if (itemClass != null)
+             itemValue = factory.createValueExpression(context, "#{item}", itemClass);
     }
 
     // TODO: maybe split setting request/response and item to minimize.
