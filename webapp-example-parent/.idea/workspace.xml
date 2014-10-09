@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="714ac37e-9243-469c-9f0a-b6529612b211" name="Default" comment="" />
+    <list default="true" id="89996fb7-cfa7-42d6-89fc-e7343f6efdd4" name="Default" comment="" />
     <ignored path="webapp-example-parent.iws" />
     <ignored path=".idea/workspace.xml" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -26,12 +26,6 @@
       <MavenGeneralSettings>
         <option name="usePluginRegistry" value="true" />
       </MavenGeneralSettings>
-    </option>
-    <option name="importingSettings">
-      <MavenImportingSettings>
-        <option name="downloadDocsAutomatically" value="true" />
-        <option name="downloadSourcesAutomatically" value="true" />
-      </MavenImportingSettings>
     </option>
   </component>
   <component name="ProjectFrameBounds">
@@ -66,8 +60,6 @@
       <sortByType />
     </navigator>
     <panes>
-      <pane id="Scope" />
-      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -88,6 +80,8 @@
           </PATH>
         </subPane>
       </pane>
+      <pane id="Scope" />
+      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -200,9 +194,9 @@
   <component name="ShelveChangesManager" show_recycled="false" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="714ac37e-9243-469c-9f0a-b6529612b211" name="Default" comment="" />
-      <created>1412819495725</created>
-      <updated>1412819495725</updated>
+      <changelist id="89996fb7-cfa7-42d6-89fc-e7343f6efdd4" name="Default" comment="" />
+      <created>1412821154983</created>
+      <updated>1412821154983</updated>
     </task>
     <servers />
   </component>

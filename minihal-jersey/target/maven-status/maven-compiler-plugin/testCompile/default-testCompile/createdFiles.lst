@@ -2,3 +2,4 @@ us/norskog/minihal/Request.class
 us/norskog/minihal/ELTest.class
 us/norskog/minihal/Item.class
 us/norskog/minihal/Response.class
+org/glassfish/jersey/examples/helloworld/webapp/HelloWorldTest.class
