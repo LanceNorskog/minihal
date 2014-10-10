@@ -14,7 +14,7 @@ import java.util.Map;
  */
 public class ParserTest {
 
-    @Test
+//    @Test
     public void parseSimple() {
         Parser p = new Parser("/abc");
         List<Object> parts = p.getParts();
@@ -22,10 +22,80 @@ public class ParserTest {
         Assert.assertEquals("/abc", parts.get(0));
     }
 
-    @Test
+ //   @Test
     public void parse1Expr() {
         Parser p = new Parser("${request.q}");
+        List<Object> parts = p.getParts();
+        Assert.assertEquals(1, parts.size());
+        Assert.assertEquals(Expression.class, parts.get(0).getClass());
+        p = new Parser("/abc/${request.q}");
+        parts = p.getParts();
+        Assert.assertEquals(2, parts.size());
+        Assert.assertEquals("/abc/", parts.get(0));
+        Assert.assertEquals(Expression.class, parts.get(1).getClass());
+        p = new Parser("${request.q}/def");
+        parts = p.getParts();
+        Assert.assertEquals(2, parts.size());
+        Assert.assertEquals(Expression.class, parts.get(0).getClass());
+        Assert.assertEquals("/def", parts.get(1));
+        p = new Parser("/abc/${request.q}/def");
+        parts = p.getParts();
+        Assert.assertEquals(3, parts.size());
+        Assert.assertEquals("/abc/", parts.get(0));
+        Assert.assertEquals(Expression.class, parts.get(1).getClass());
+        Assert.assertEquals("/def", parts.get(2));
+    }
 
+   // @Test
+    public void parse2Expr() {
+        Parser p = new Parser("${request.q}${request.rows}");
+        List<Object> parts = p.getParts();
+        Assert.assertEquals(1, parts.size());
+        Assert.assertEquals(Expression.class, parts.get(0).getClass());
+        p = new Parser("/abc/${request.q}");
+        parts = p.getParts();
+        Assert.assertEquals(2, parts.size());
+        Assert.assertEquals("/abc/", parts.get(0));
+        Assert.assertEquals(Expression.class, parts.get(1).getClass());
+        p = new Parser("${request.q}/def");
+        parts = p.getParts();
+        Assert.assertEquals(2, parts.size());
+        Assert.assertEquals(Expression.class, parts.get(0).getClass());
+        Assert.assertEquals("/def", parts.get(1));
+        p = new Parser("/abc/${request.q}/def");
+        parts = p.getParts();
+        Assert.assertEquals(3, parts.size());
+        Assert.assertEquals("/abc/", parts.get(0));
+        Assert.assertEquals(Expression.class, parts.get(1).getClass());
+        Assert.assertEquals("/def", parts.get(2));
+    }
+
+    @Test
+    public void parseFail() throws Exception {
+        // empty string is ok but not empty EL
+        illegal("${}");
+        illegal("$");
+        illegal("${");
+        illegal("}");
+        illegal("{}");
+        illegal("${}/def");
+        illegal("${request.q/def");
+        illegal("$request.q}/def");
+        illegal("{request.q}/def");
+        illegal("request.q}/def");
+
+        illegal("/abc/{request.q}");
+        illegal("/abc/$request.q}");
+        illegal("/abc/{request.q");
+        illegal("/abc/request.q}");
+      }
+
+    private void illegal(String expr) throws Exception {
+        try {
+            new Parser(expr);
+            throw new Exception("Expr should not parse: " + expr);
+        } catch (IllegalArgumentException e) {
+        }
     }
 
 

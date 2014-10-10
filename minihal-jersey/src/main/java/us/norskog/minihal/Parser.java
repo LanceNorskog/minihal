@@ -21,7 +21,12 @@ public class Parser {
             char ch = spec.charAt(i);
             if (el) {
                 if (ch == '}') {
-                    parts.add(new Expression(sb.toString()));
+                    if (sb.length() > 0) {
+                        parts.add(new Expression(sb.toString()));
+                        sb.setLength(0);
+                    } else {
+                        throw new IllegalArgumentException();
+                    }
                     el = false;
                 } else {
                     sb.append(ch);
@@ -31,11 +36,15 @@ public class Parser {
                     if (i + 1 == spec.length() || ! (spec.charAt(i + 1) == '{'))
                         throw new IllegalArgumentException();
                     i++;
-                    parts.add(sb.toString());
-                    sb.setLength(0);
+                    if (sb.length() > 0) {
+                        parts.add(sb.toString());
+                        sb.setLength(0);
+                    }
                     el = true;
+                } else if (ch == '{' || ch == '}') {
+                    throw new IllegalArgumentException();
                 } else {
-                    sb.append(ch);
+                        sb.append(ch);
                 }
             }
         }
