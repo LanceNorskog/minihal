@@ -32,13 +32,15 @@ public class ELBase {
          factory = new de.odysseus.el.ExpressionFactoryImpl();
     }
 
-    public void setTypes(Class requestClass, Class responseClass, Class itemClass) {
+    public void setTypes(Class requestClass, Class responseClass) {
         // cache request, response, item
         context = new SimpleContext(new SimpleResolver());
         requestValue = factory.createValueExpression(context, "#{request}", requestClass);
         responseValue = factory.createValueExpression(context, "#{response}", responseClass);
-        if (itemClass != null)
-             itemValue = factory.createValueExpression(context, "#{item}", itemClass);
+    }
+
+    public void setItemType(Class itemClass) {
+        itemValue = factory.createValueExpression(context, "#{item}", itemClass);
     }
 
     // TODO: maybe split setting request/response and item to minimize.
@@ -71,8 +73,8 @@ public class ELBase {
         System.out.println("Value of " + single + ": " + cooked);
         return cooked;
     }
-        // get iterator of items
-    public Collection<Object> getItems(String items) {
+        // get iterator of items objects
+    public List<Object> getItems(String items) {
         Object raw = eval(items);
         System.out.println("Class of " + items + ": " + raw.getClass());
         if (raw.getClass().isArray()) {
@@ -85,9 +87,23 @@ public class ELBase {
             return list;
         }
         if (raw instanceof Collection) {
-            return (Collection) raw;
+            List<Object> list = new ArrayList<Object>((Collection) raw);
+            return list;
         }
 
         return Collections.emptyList();
+    }
+
+    public List<String> expandItems(List<Object> itemList, String itemExpr) {
+        List<String> embedded = new ArrayList<String>();
+        if (itemList.size() == 0)
+            return embedded;
+        setItemType(itemList.get(0).getClass());
+        for(Object item: itemList) {
+            itemValue.setValue(context, item);
+            String embed = evalExpr(itemExpr);
+            embedded.add(embed);
+        }
+        return embedded;
     }
 }

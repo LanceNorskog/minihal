@@ -7,7 +7,7 @@ import java.util.List;
  * Parse and save parts of a hyperlink spec
  */
 public class Parser {
-    List<Object> parts = new ArrayList<Object>();
+    List<Expression> parts = new ArrayList<Expression>();
     Class requestClass;
     Class responseClass;
     private Class itemClass;
@@ -22,7 +22,7 @@ public class Parser {
             if (el) {
                 if (ch == '}') {
                     if (sb.length() > 0) {
-                        parts.add(new Expression(sb.toString()));
+                        parts.add(new Expression(sb.toString(), true));
                         sb.setLength(0);
                     } else {
                         throw new IllegalArgumentException();
@@ -37,7 +37,7 @@ public class Parser {
                         throw new IllegalArgumentException();
                     i++;
                     if (sb.length() > 0) {
-                        parts.add(sb.toString());
+                        parts.add(new Expression(sb.toString(), false));
                         sb.setLength(0);
                     }
                     el = true;
@@ -50,33 +50,28 @@ public class Parser {
         }
         if (el)
             throw new IllegalArgumentException();
-        if (sb.length() > 0)
-            parts.add(sb.toString());
+        if (sb.length() > 0 || parts.size() == 0)
+            parts.add(new Expression(sb.toString(), false));
     }
 
     public void setTypes(Class requestClass, Class responseClass, Class itemClass) {
         this.requestClass = requestClass;
         this.responseClass = responseClass;
         this.itemClass = itemClass;
-        for(Object part: parts) {
-            if (part instanceof Expression) {
-                ((Expression) part).setTypes(requestClass, responseClass, itemClass);
-            }
+        for(Expression part: parts) {
+            part.setTypes(requestClass, responseClass, itemClass);
         }
     }
 
     public String evaluate(Object request, Object response, Object item) {
         StringBuilder sb = new StringBuilder();
-        for(Object part: parts) {
-            if (part instanceof String)
-                sb.append((String) part);
-            else
-                sb.append(((Expression) part).eval(request, response, item));
+        for(Expression part: parts) {
+            sb.append(part.eval(request, response, item));
         }
         return sb.toString();
     }
 
-    public List<Object> getParts() {
+    public List<Expression> getParts() {
         return parts;
     }
 }

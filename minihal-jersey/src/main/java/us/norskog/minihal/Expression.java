@@ -8,20 +8,32 @@ package us.norskog.minihal;
 
 class Expression {
     final private String expr;
+    final private boolean doEL;
     final private ELBase base;
 
-    public Expression(String expr) {
+    public Expression(String expr, boolean doEL) {
         this.expr = expr;
-        base = new ELBase();
+        this.doEL = doEL;
+        if (doEL)
+            base = new ELBase();
+        else
+            base = null;
     }
 
     public void setTypes(Class requestClass, Class responseClass, Class itemClass) {
-        base.setTypes(requestClass, responseClass, itemClass);
+        base.setTypes(requestClass, responseClass);
+        base.setItemType(itemClass);
     }
 
-    public String eval(Object request, Object response, Object item) {
+    public Object eval(Object request, Object response, Object item) {
+        if (! doEL)
+            return expr;
         base.setVars(request, response, item);
-        String value = base.evalExpr(expr);
+        Object value = base.evalExpr(expr);
         return value;
+    }
+
+    public String toString() {
+        return expr;
     }
 }
