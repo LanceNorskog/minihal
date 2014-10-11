@@ -1,7 +1,8 @@
 package us.norskog.minihal;
 
 /**
- * Expression evaluator: return current value
+ * Expression evaluator: return current value of constant or expandable expression
+ * based on given data.
  */
 
 

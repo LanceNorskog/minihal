@@ -73,7 +73,7 @@ public class ELBase {
         System.out.println("Value of " + single + ": " + cooked);
         return cooked;
     }
-        // get iterator of items objects
+
     public List<Object> getItems(String items) {
         Object raw = eval(items);
         System.out.println("Class of " + items + ": " + raw.getClass());

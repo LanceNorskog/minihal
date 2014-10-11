@@ -41,6 +41,9 @@ package org.glassfish.jersey.examples.helloworld.webapp;
 
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
+
+import us.norskog.minihal.MinihalInterceptor;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -54,6 +57,7 @@ public class MyApplication extends Application {
         final Set<Class<?>> classes = new HashSet<Class<?>>();
         // register root resource
         classes.add(HelloWorldResource.class);
+        classes.add(MinihalInterceptor.class);
         return classes;
     }
 }

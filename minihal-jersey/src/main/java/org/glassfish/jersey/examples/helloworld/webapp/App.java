@@ -49,8 +49,9 @@ import java.util.logging.Logger;
 import org.glassfish.jersey.grizzly2.servlet.GrizzlyWebContainerFactory;
 import org.glassfish.jersey.server.ServerProperties;
 import org.glassfish.jersey.servlet.ServletContainer;
-
 import org.glassfish.grizzly.http.server.HttpServer;
+
+import us.norskog.minihal.MinihalInterceptor;
 
 /**
  * @author Pavel Bucek (pavel.bucek at oracle.com)
@@ -67,7 +68,8 @@ public class App {
             Map<String, String> initParams = new HashMap<String, String>();
             initParams.put(
                     ServerProperties.PROVIDER_PACKAGES,
-                    HelloWorldResource.class.getPackage().getName());
+                    HelloWorldResource.class.getPackage().getName() + "," +
+                    MinihalInterceptor.class.getPackage().getName());
             final HttpServer server = GrizzlyWebContainerFactory.create(BASE_URI, ServletContainer.class, initParams);
 
             System.out.println(String.format("Application started.%nTry out %s%s%nHit enter to stop it...",
