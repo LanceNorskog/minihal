@@ -39,6 +39,11 @@
  */
 package org.glassfish.jersey.examples.helloworld.webapp;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import us.norskog.minihal.Links;
 
 import javax.ws.rs.GET;
@@ -53,9 +58,23 @@ public class HelloWorldResource {
 
     @GET
     @Produces("text/plain")
-    @Links
-    public String getHello() {
-        return "Hello World!";
+ //   @Links
+    public Value getHello() {
+        return new Value();
+    }
+    
+    class Value {
+    	String first = "one";
+    	String second = "two";
+    	List<String> list = new ArrayList<String>();
+    	Map<String, Integer> map = new HashMap<String, Integer>();
+    	
+    	Value() {
+    		list.add("ten");
+    		list.add("eleven");
+    		map.put("100", 100);
+    		map.put("101", 101);
+    	}
     }
 
 }

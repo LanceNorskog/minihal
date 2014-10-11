@@ -14,7 +14,7 @@ import javax.ws.rs.ext.WriterInterceptorContext;
 import us.norskog.minihal.Links;
 
 @Provider
-// @Links
+@Links
 public class SimpleInterceptor implements WriterInterceptor {
 
 	public SimpleInterceptor() {
