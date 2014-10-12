@@ -8,6 +8,7 @@ import javax.ws.rs.ext.WriterInterceptorContext;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.lang.annotation.Annotation;
 import java.util.Arrays;
 
 /**
@@ -47,7 +48,11 @@ public class MinihalInterceptor implements WriterInterceptor {
     void dumpContext(WriterInterceptorContext context) {
         System.out.println("getType: " + context.getType().getClass());
         System.out.println("getEntity: " + context.getEntity().getClass());
-        System.out.println("getGenericType: " + context.getGenericType().getClass());
+        System.out.println("getGenericType: " + context.getGenericType().getClass().toGenericString());
+        Annotation[] annos = context.getAnnotations();
+        for(Annotation anno: annos) {
+        	System.out.println("\tanno: " + anno.toString());
+        }
     }
 
 }

@@ -49,6 +49,11 @@ import us.norskog.minihal.Links;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+
+import org.glassfish.jersey.message.XmlHeader;
 
 /**
  * @author Pavel Bucek (pavel.bucek at oracle.com)
@@ -56,25 +61,29 @@ import javax.ws.rs.Produces;
 @Path("helloworld")
 public class HelloWorldResource {
 
-    @GET
-    @Produces("text/plain")
- //   @Links
-    public Value getHello() {
-        return new Value();
-    }
-    
-    class Value {
-    	String first = "one";
-    	String second = "two";
-    	List<String> list = new ArrayList<String>();
-    	Map<String, Integer> map = new HashMap<String, Integer>();
-    	
-    	Value() {
-    		list.add("ten");
-    		list.add("eleven");
-    		map.put("100", 100);
-    		map.put("101", 101);
-    	}
-    }
+	@GET
+	@Path("string")
+	@Produces("text/plain")
+	@Links
+	public String getString() {
+		return "[]";
+	}
+
+	@GET
+	@Path("value")
+	@Produces({MediaType.APPLICATION_XML,MediaType.APPLICATION_JSON})
+	@Links
+	public Value getHello() {
+		return new Value();
+	}
+
+	@GET
+	@Path("array")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Links
+	public String getArray() {
+		return "[]";
+	}
 
 }
+
