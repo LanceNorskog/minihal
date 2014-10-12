@@ -71,7 +71,7 @@ public class HelloWorldResource {
 
 	@GET
 	@Path("value")
-	@Produces({MediaType.APPLICATION_XML,MediaType.APPLICATION_JSON})
+	@Produces({MediaType.APPLICATION_XML,MediaType.APPLICATION_JSON, "application/hal+json"})
 	@Links
 	public Value getHello() {
 		return new Value();

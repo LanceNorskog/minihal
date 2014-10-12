@@ -21,4 +21,7 @@ public class Value {
 		map.put("100", 100);
 		map.put("101", 101);
 	}
+	
+	public List<String> getList() { return list; }
+	public Map<String, Integer> getMap() {return map;}
 }

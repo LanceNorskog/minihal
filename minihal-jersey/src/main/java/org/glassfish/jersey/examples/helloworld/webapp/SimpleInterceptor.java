@@ -31,13 +31,13 @@ public class SimpleInterceptor implements WriterInterceptor {
 			System.err.println("\tEntity object is null!");
 		else		
 			System.err.println("\tEntity type: " + ob.getClass().getCanonicalName().toString());
-		OutputStream os = context.getOutputStream();
-		
-		byte[] buf = new byte[100];
-		Arrays.fill(buf, (byte) 'b'); 
-		os.write(buf);
-		ByteArrayOutputStream bos = new ByteArrayOutputStream();
-		context.setOutputStream(bos);
+//		OutputStream os = context.getOutputStream();
+//		
+//		byte[] buf = new byte[100];
+//		Arrays.fill(buf, (byte) 'b'); 
+//		os.write(buf);
+//		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+//		context.setOutputStream(bos);
 		context.proceed();
 	}
 

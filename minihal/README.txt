@@ -61,10 +61,15 @@ where title does not start with a /. It could use the %xxx code for /.
 What is in front of /path?
 
 @Links(
+	@LinkSet(
     @Link(rel="self",href="/orders",title="Orders", {more attribute pairs as simple string array}),...)
 @Embedded(item="${a.b}", links={
     @Link(rel="self",href="/path/order/${order}", ... }
-    includeData = true
+    )
+    @Embedded(
+        path = "a.b means a.getB()",
+        @LinkSet(... as above but with "item." available)
+        )
     )
 )
 
