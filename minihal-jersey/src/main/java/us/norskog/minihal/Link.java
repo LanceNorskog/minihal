@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Link {
 	String rel();
-	String title();
+	String title() default "";
 	String href();
 	String[] more() default {};
 }

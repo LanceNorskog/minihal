@@ -5,6 +5,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import org.jvnet.hk2.annotations.Optional;
+
 /**
  * Specify HAL hyperlinks to add to your endpoint's return value.
  * endpoint must return a structure, map<String,Object>, array,
