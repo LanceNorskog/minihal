@@ -64,7 +64,6 @@ public class HelloWorldResource {
 	@GET
 	@Path("string")
 	@Produces("text/plain")
-	@Links
 	public String getString() {
 		return "[]";
 	}
@@ -72,7 +71,6 @@ public class HelloWorldResource {
 	@GET
 	@Path("value")
 	@Produces({MediaType.APPLICATION_XML,MediaType.APPLICATION_JSON, "application/hal+json"})
-	@Links
 	public Value getHello() {
 		return new Value();
 	}
@@ -80,7 +78,6 @@ public class HelloWorldResource {
 	@GET
 	@Path("array")
 	@Produces(MediaType.APPLICATION_JSON)
-	@Links
 	public String getArray() {
 		return "[]";
 	}

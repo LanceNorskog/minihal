@@ -7,8 +7,7 @@ import java.util.List;
  * Parse and save parts of a hyperlink spec
  */
 public class Parser {
-    List<Expression> parts = new ArrayList<Expression>();
-    Class requestClass;
+    List<Expression> expressions = new ArrayList<Expression>();
     Class responseClass;
     private Class itemClass;
 
@@ -22,7 +21,7 @@ public class Parser {
             if (el) {
                 if (ch == '}') {
                     if (sb.length() > 0) {
-                        parts.add(new Expression(sb.toString(), true));
+                        expressions.add(new Expression(sb.toString(), true));
                         sb.setLength(0);
                     } else {
                         throw new IllegalArgumentException();
@@ -37,7 +36,7 @@ public class Parser {
                         throw new IllegalArgumentException();
                     i++;
                     if (sb.length() > 0) {
-                        parts.add(new Expression(sb.toString(), false));
+                        expressions.add(new Expression(sb.toString(), false));
                         sb.setLength(0);
                     }
                     el = true;
@@ -50,29 +49,28 @@ public class Parser {
         }
         if (el)
             throw new IllegalArgumentException();
-        if (sb.length() > 0 || parts.size() == 0)
-            parts.add(new Expression(sb.toString(), false));
+        if (sb.length() > 0 || expressions.size() == 0)
+            expressions.add(new Expression(sb.toString(), false));
     }
 
-    public void setTypes(Class requestClass, Class responseClass, Class itemClass) {
-        this.requestClass = requestClass;
+    public void setTypes(Class responseClass, Class itemClass) {
         this.responseClass = responseClass;
         this.itemClass = itemClass;
-        for(Expression part: parts) {
-            part.setTypes(requestClass, responseClass, itemClass);
+        for(Expression part: expressions) {
+            part.setTypes(responseClass, itemClass);
         }
     }
 
     public String evaluate(Object request, Object response, Object item) {
         StringBuilder sb = new StringBuilder();
-        for(Expression part: parts) {
-            sb.append(part.eval(request, response, item));
+        for(Expression expression: expressions) {
+            sb.append(expression.eval(response, item));
         }
         return sb.toString();
     }
 
-    public List<Expression> getParts() {
-        return parts;
+    public List<Expression> getExpressions() {
+        return expressions;
     }
 }
 

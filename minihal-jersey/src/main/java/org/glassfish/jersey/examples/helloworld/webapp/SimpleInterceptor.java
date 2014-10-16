@@ -11,10 +11,12 @@ import javax.ws.rs.ext.Provider;
 import javax.ws.rs.ext.WriterInterceptor;
 import javax.ws.rs.ext.WriterInterceptorContext;
 
+import us.norskog.minihal.Link;
+import us.norskog.minihal.LinkSet;
 import us.norskog.minihal.Links;
 
 @Provider
-@Links
+@Links(linkset = @LinkSet(links = { @Link(href = "", rel = "") }))
 public class SimpleInterceptor implements WriterInterceptor {
 
 	public SimpleInterceptor() {

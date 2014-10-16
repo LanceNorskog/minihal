@@ -12,4 +12,5 @@ public @interface Link {
 	String title() default "";
 	String href();
 	String[] more() default {};
+	String check() default "";
 }

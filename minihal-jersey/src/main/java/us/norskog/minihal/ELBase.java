@@ -11,7 +11,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Implement EL actions for request, response and item.
+ * Implement EL actions for response and item.
  * First get EL interface right, then refine to getX bean stuff only.
  * Object is hard-created to eval one string.
  * User must create its own map of objects.
@@ -23,7 +23,6 @@ public class ELBase {
 
     private ExpressionFactory factory;
     private SimpleContext context;
-    private ValueExpression requestValue;
     private ValueExpression responseValue;
     private ValueExpression itemValue;
 
@@ -32,10 +31,9 @@ public class ELBase {
          factory = new de.odysseus.el.ExpressionFactoryImpl();
     }
 
-    public void setTypes(Class requestClass, Class responseClass) {
-        // cache request, response, item
+    public void setTypes(Class responseClass) {
+        // cache response evaluator
         context = new SimpleContext(new SimpleResolver());
-        requestValue = factory.createValueExpression(context, "#{request}", requestClass);
         responseValue = factory.createValueExpression(context, "#{response}", responseClass);
     }
 
@@ -43,9 +41,7 @@ public class ELBase {
         itemValue = factory.createValueExpression(context, "#{item}", itemClass);
     }
 
-    // TODO: maybe split setting request/response and item to minimize.
-    public Object setVars(Object request, Object response, Object item) {
-        requestValue.setValue(context, request);
+    public Object setVars(Object response, Object item) {
         responseValue.setValue(context, response);
         if (item != null)
             itemValue.setValue(context, item);

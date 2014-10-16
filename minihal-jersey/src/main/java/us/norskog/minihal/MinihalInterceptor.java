@@ -4,44 +4,26 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.ext.Provider;
 import javax.ws.rs.ext.WriterInterceptor;
 import javax.ws.rs.ext.WriterInterceptorContext;
-import javax.xml.bind.JAXB;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonObjectFormatVisitor;
-import com.fasterxml.jackson.databind.ser.BeanSerializerFactory;
-import com.fasterxml.jackson.databind.util.BeanUtil;
-
-import java.beans.BeanInfo;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.lang.annotation.Annotation;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
- * Created by lance on 10/9/14.
+ * Jersey Interceptor for Minihal links unpacker
+ * For all requests for hal+json, add hyperlinks defined
+ * by @Links annotation on endpoint.
+ * Hyperlinks are defined with text titles, urls etc. which
+ * include substitution strings which are filled in by Java EL
+ * language.
  */
 
 @Provider
-@Links
+@Links(linkset = @LinkSet(links = { @Link(href = "", rel = "") }))
 public class MinihalInterceptor implements WriterInterceptor {
 	public static final String HAL = "application/hal+json";
 	
-	Handler handler = new Handler();
+	static Handler handler = new Handler();
+	static GetAnnos getAnnos;
+	static MakeLinks makeLinks;
 
 	public MinihalInterceptor() {
 		System.err.println("MinihalInterceptor created");
@@ -63,6 +45,10 @@ public class MinihalInterceptor implements WriterInterceptor {
 			System.err.println("\tEntity type: " + ob.getClass().getCanonicalName().toString());
 		Handler h = new Handler();
 		Object objectAsMap = h.convertToMap(context.getEntity());
+		if (getAnnos == null) {
+			getAnnos = new GetAnnos(context.getAnnotations());
+		}
+		
 		System.err.println("map: " + objectAsMap.toString());
 	    context.setEntity(objectAsMap);
 		context.proceed();

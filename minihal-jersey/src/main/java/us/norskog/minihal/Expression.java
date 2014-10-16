@@ -21,15 +21,15 @@ class Expression {
             base = null;
     }
 
-    public void setTypes(Class requestClass, Class responseClass, Class itemClass) {
-        base.setTypes(requestClass, responseClass);
+    public void setTypes(Class responseClass, Class itemClass) {
+        base.setTypes(responseClass);
         base.setItemType(itemClass);
     }
 
-    public Object eval(Object request, Object response, Object item) {
+    public Object eval(Object response, Object item) {
         if (! doEL)
             return expr;
-        base.setVars(request, response, item);
+        base.setVars(response, item);
         Object value = base.evalExpr(expr);
         return value;
     }
