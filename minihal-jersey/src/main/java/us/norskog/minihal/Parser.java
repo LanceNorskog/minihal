@@ -19,7 +19,8 @@ public class Parser {
             char ch = spec.charAt(i);
             if (el) {
                 if (ch == '}') {
-                    if (sb.length() > 0) {
+                    if (sb.length() > 2) {
+                    	sb.append("}");
                         expressions.add(new Expression(sb.toString(), true));
                         sb.setLength(0);
                     } else {
@@ -38,6 +39,7 @@ public class Parser {
                         expressions.add(new Expression(sb.toString(), false));
                         sb.setLength(0);
                     }
+                    sb.append("${");
                     el = true;
                     doEl = true;
                 } else if (ch == '{' || ch == '}') {

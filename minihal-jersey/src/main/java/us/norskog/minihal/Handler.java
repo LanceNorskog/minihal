@@ -22,8 +22,10 @@ public class Handler {
 	public Map<String, Object> convertToMap(Object obj) {	
 		Map<String, Object> objectAsMap;
 		long start = System.currentTimeMillis();
+		// threadlocal or static this
 		ObjectMapper mapper = new ObjectMapper();
-		if (System.currentTimeMillis() - start > 0)
+		long delta = System.currentTimeMillis() - start;
+		if (delta > 0)
 			this.hashCode();
 		try {
 			byte[] b;

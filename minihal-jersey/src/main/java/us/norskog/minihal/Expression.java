@@ -13,6 +13,8 @@ class Expression {
     public Expression(String expr, boolean doEL) {
         this.expr = expr;
         this.doEL = doEL;
+        if (doEL)
+        	this.hashCode();
     }
     
     public void setDoEL(boolean doEl) {

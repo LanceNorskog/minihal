@@ -7,13 +7,32 @@ import org.junit.Test;
 
 import java.util.*;
 
-public class ELTest {
+/**
+ * All features of base Executor
+ * including variable expansion
+ * @author lance
+ *
+ */
+
+public class ExecutorTest {
+	Map<String,Object> map;
 	Response response;
 	Item item;
 	Executor base;
 
 	@Before
 	public void setUp() throws Exception {
+		map = new HashMap<String,Object>();
+		map.put("q", "monkeys");
+		map.put("rows", 10);
+		Item[] itemArray = new Item[2];
+		itemArray[0] = new Item("A1");
+		itemArray[1] = new Item("A2");
+		map.put("itemArray", itemArray);
+		map.put("itemList", new ArrayList<Item>());
+		((List<Item>)map.get("itemList")).add(new Item("B1"));
+		((List<Item>)map.get("itemList")).add(new Item("B2"));
+		
 		response = new Response();
 		item = new Item("");
 		base = new Executor();
@@ -23,19 +42,38 @@ public class ELTest {
 	@After
 	public void tearDown() throws Exception {
 		base = null;
+		
 	}
 
-	//   @Test
-	public void requests() {
+	@Test
+	public void response() {
 		String abc = base.evalExpr("${abc}");
-		Assert.assertEquals("null", abc);
-		abc = base.evalExpr("${request.params.q}");
+		Assert.assertNull( abc);
+		abc = base.evalExpr("${response.q}");
 		Assert.assertEquals("monkeys", abc);
-		abc = base.evalExpr("${request.params.rows}");
+		abc = base.evalExpr("${response.rows}");
 		Assert.assertEquals("10", abc);
+		abc = base.evalExpr("${response.rows * 2}");
+		Assert.assertEquals("20", abc);
 	}
 
-	//  @Test
+	@Test
+	public void map() {
+		Executor mapbase = new Executor();
+		mapbase.setVars(map, null);
+
+		String abc = mapbase.evalExpr("${abc}");
+		Assert.assertNull( abc);
+		abc = mapbase.evalExpr("${response.q}");
+		Assert.assertEquals("monkeys", abc);
+		abc = mapbase.evalExpr("${response.rows}");
+		Assert.assertEquals("10", abc);
+		abc = mapbase.evalExpr("${response.rows * 2}");
+		Assert.assertEquals("20", abc);
+		getItems();
+	}
+
+	@Test
 	public void getItems() {
 		List<Object> items = base.getItems("${response.itemArray}");
 		Assert.assertNotNull(items);

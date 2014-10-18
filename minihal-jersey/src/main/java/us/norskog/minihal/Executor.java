@@ -56,6 +56,8 @@ public class Executor {
 		try {
 			raw = expr.getValue(context);
 			return raw;
+		} catch (javax.el.PropertyNotFoundException e) {
+			return null;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -65,7 +67,7 @@ public class Executor {
 	public String evalExpr(String single) {
 		Object raw = eval(single);
 		if (raw == null)
-			raw = "null";
+			return null;
 		System.out.println("Class of " + single + ": " + raw.getClass());
 		String cooked = raw.toString();
 		System.out.println("Value of " + single + ": " + cooked);
@@ -75,6 +77,8 @@ public class Executor {
 	public List<Object> getItems(String items) {
 		Object raw = eval(items);
 		System.out.println("Class of " + items + ": " + raw.getClass());
+		if (raw instanceof List)
+			return (List<Object>) raw;
 		if (raw.getClass().isArray()) {
 			Object[] obs = (Object[]) raw;
 			System.out.println("Items in array: " + obs.length);

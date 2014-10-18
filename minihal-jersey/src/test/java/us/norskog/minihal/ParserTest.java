@@ -36,27 +36,27 @@ public class ParserTest {
         List<Expression> parts = p.getExpressions();
         Assert.assertEquals(1, parts.size());
         Assert.assertEquals(Expression.class, parts.get(0).getClass());
-        Assert.assertEquals("q", parts.get(0).toString());
+        Assert.assertEquals("${q}", parts.get(0).toString());
         p = new Parser("${qr}");
         parts = p.getExpressions();
         Assert.assertEquals(1, parts.size());
         Assert.assertEquals(Expression.class, parts.get(0).getClass());
-        Assert.assertEquals("qr", parts.get(0).toString());
+        Assert.assertEquals("${qr}", parts.get(0).toString());
         p = new Parser("${request.q}");
         parts = p.getExpressions();
         Assert.assertEquals(1, parts.size());
         Assert.assertEquals(Expression.class, parts.get(0).getClass());
-        Assert.assertEquals("request.q", parts.get(0).toString());
+        Assert.assertEquals("${request.q}", parts.get(0).toString());
         p = new Parser("/abc/${request.q}");
         parts = p.getExpressions();
         Assert.assertEquals(2, parts.size());
         Assert.assertEquals("/abc/", parts.get(0).toString());
         Assert.assertEquals(Expression.class, parts.get(1).getClass());
-        Assert.assertEquals("request.q", parts.get(1).toString());
+        Assert.assertEquals("${request.q}", parts.get(1).toString());
         p = new Parser("${request.q}/def");
         parts = p.getExpressions();
         Assert.assertEquals(2, parts.size());
-        Assert.assertEquals("request.q", parts.get(0).toString());
+        Assert.assertEquals("${request.q}", parts.get(0).toString());
         Assert.assertEquals(Expression.class, parts.get(0).getClass());
         Assert.assertEquals("/def", parts.get(1).toString());
         p = new Parser("/abc/${request.q}/def");
@@ -64,7 +64,7 @@ public class ParserTest {
         Assert.assertEquals(3, parts.size());
         Assert.assertEquals("/abc/", parts.get(0).toString());
         Assert.assertEquals(Expression.class, parts.get(1).getClass());
-        Assert.assertEquals("request.q", parts.get(1).toString());
+        Assert.assertEquals("${request.q}", parts.get(1).toString());
         Assert.assertEquals("/def", parts.get(2).toString());
     }
 
@@ -75,28 +75,28 @@ public class ParserTest {
         Assert.assertEquals(2, parts.size());
         Assert.assertEquals(Expression.class, parts.get(0).getClass());
         Assert.assertEquals(Expression.class, parts.get(1).getClass());
-        Assert.assertEquals("request.q", parts.get(0).toString());
-        Assert.assertEquals("request.rows", parts.get(1).toString());
+        Assert.assertEquals("${request.q}", parts.get(0).toString());
+        Assert.assertEquals("${request.rows}", parts.get(1).toString());
         p = new Parser("${request.q}/abc/${request.q}");
         parts = p.getExpressions();
         Assert.assertEquals(3, parts.size());
         Assert.assertEquals(Expression.class, parts.get(0).getClass());
-        Assert.assertEquals("request.q", parts.get(0).toString());
+        Assert.assertEquals("${request.q}", parts.get(0).toString());
         Assert.assertEquals("/abc/", parts.get(1).toString());
         Assert.assertEquals(Expression.class, parts.get(2).getClass());
-        Assert.assertEquals("request.q", parts.get(2).toString());
+        Assert.assertEquals("${request.q}", parts.get(2).toString());
         p = new Parser("${request.q}/def");
         parts = p.getExpressions();
         Assert.assertEquals(2, parts.size());
         Assert.assertEquals(Expression.class, parts.get(0).getClass());
-        Assert.assertEquals("request.q", parts.get(0).toString());
+        Assert.assertEquals("${request.q}", parts.get(0).toString());
         Assert.assertEquals("/def", parts.get(1).toString());
         p = new Parser("/abc/${request.q}/def");
         parts = p.getExpressions();
         Assert.assertEquals(3, parts.size());
         Assert.assertEquals("/abc/", parts.get(0).toString());
         Assert.assertEquals(Expression.class, parts.get(1).getClass());
-        Assert.assertEquals("request.q", parts.get(1).toString());
+        Assert.assertEquals("${request.q}", parts.get(1).toString());
         Assert.assertEquals("/def", parts.get(2).toString());
     }
 
