@@ -10,13 +10,13 @@ import java.util.*;
 public class ELTest {
 	Response response;
 	Item item;
-	ELBase base;
+	Executor base;
 
 	@Before
 	public void setUp() throws Exception {
 		response = new Response();
 		item = new Item("");
-		base = new ELBase();
+		base = new Executor();
 		base.setTypes(response.getClass());
 		base.setItemType(item.getClass());
 		base.setVars(response, item);

@@ -1,36 +1,28 @@
 package us.norskog.minihal;
 
 /**
- * Expression evaluator: return current value of constant or expandable expression
- * based on given data.
+ * Expression: evaluatable expression or simple string.
  */
 
 
 
 class Expression {
     final private String expr;
-    final private boolean doEL;
-    final private ELBase base;
+    private boolean doEL;
 
     public Expression(String expr, boolean doEL) {
         this.expr = expr;
         this.doEL = doEL;
-        if (doEL)
-            base = new ELBase();
-        else
-            base = null;
+    }
+    
+    public void setDoEL(boolean doEl) {
+    	this.doEL = doEl;
     }
 
-    public void setTypes(Class responseClass, Class itemClass) {
-        base.setTypes(responseClass);
-        base.setItemType(itemClass);
-    }
-
-    public Object eval(Object response, Object item) {
+    public Object eval(Executor executor) {
         if (! doEL)
             return expr;
-        base.setVars(response, item);
-        Object value = base.evalExpr(expr);
+        Object value = executor.evalExpr(expr);
         return value;
     }
 

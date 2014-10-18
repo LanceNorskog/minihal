@@ -8,8 +8,6 @@ import java.util.List;
  */
 public class Parser {
     List<Expression> expressions = new ArrayList<Expression>();
-    Class responseClass;
-    private Class itemClass;
 
     public Parser(String spec) {
         StringBuilder sb = new StringBuilder();
@@ -53,23 +51,7 @@ public class Parser {
             expressions.add(new Expression(sb.toString(), false));
     }
 
-    public void setTypes(Class responseClass, Class itemClass) {
-        this.responseClass = responseClass;
-        this.itemClass = itemClass;
-        for(Expression part: expressions) {
-            part.setTypes(responseClass, itemClass);
-        }
-    }
-
-    public String evaluate(Object request, Object response, Object item) {
-        StringBuilder sb = new StringBuilder();
-        for(Expression expression: expressions) {
-            sb.append(expression.eval(response, item));
-        }
-        return sb.toString();
-    }
-
-    public List<Expression> getExpressions() {
+     public List<Expression> getExpressions() {
         return expressions;
     }
 }

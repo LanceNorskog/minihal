@@ -19,14 +19,14 @@ import java.util.List;
  * TODO: does any of this really need optimizing?
  *
  */
-public class ELBase {
+public class Executor {
 
     private ExpressionFactory factory;
     private SimpleContext context;
     private ValueExpression responseValue;
     private ValueExpression itemValue;
 
-    public ELBase() {
+    public Executor() {
  //        System.setProperty("javax.el.methodInvocations", "false");
          factory = new de.odysseus.el.ExpressionFactoryImpl();
     }
