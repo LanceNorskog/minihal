@@ -22,6 +22,8 @@ public class Value {
 		map.put("101", 101);
 	}
 	
+	public String getFirst() { return first; }
+	public String getSecond() { return second; }
 	public List<String> getList() { return list; }
 	public Map<String, Integer> getMap() {return map;}
 }

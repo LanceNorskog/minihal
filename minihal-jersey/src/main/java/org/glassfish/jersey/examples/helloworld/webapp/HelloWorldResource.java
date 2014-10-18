@@ -44,6 +44,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import us.norskog.minihal.Embedded;
 import us.norskog.minihal.Link;
 import us.norskog.minihal.LinkSet;
 import us.norskog.minihal.Links;
@@ -74,9 +75,19 @@ public class HelloWorldResource {
 	@Path("value")
 	@Links(linkset = @LinkSet(
 			links = {
-					@Link(rel = "self", href = "/helloworld/value", title = "Self") }
+					@Link(rel = "self", href = "/helloworld/value", title = "Self"),
+					@Link(rel = "first", href = "/helloworld/value?id=${response.first}", title = "First") }
+			),
+			embedded = @Embedded(path = "list", links = 
+			@LinkSet(
+					links = {
+							@Link(rel = "self", href = "/", title = "Self") }
+					)
+					)
+					
 			)
-			)
+
+
 	@Produces({"application/hal+json",MediaType.APPLICATION_JSON})
 	public Value getHello() {
 		return new Value();

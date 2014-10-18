@@ -14,6 +14,7 @@ public class Parser {
       // build list of parts that are either Strings or Expressions
         // need inside/outside boolean to decide which.
         boolean el = false;
+        boolean doEl = false;
         for(int i = 0; i < spec.length(); i++) {
             char ch = spec.charAt(i);
             if (el) {
@@ -38,6 +39,7 @@ public class Parser {
                         sb.setLength(0);
                     }
                     el = true;
+                    doEl = true;
                 } else if (ch == '{' || ch == '}') {
                     throw new IllegalArgumentException();
                 } else {

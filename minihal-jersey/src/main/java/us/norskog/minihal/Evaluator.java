@@ -21,8 +21,6 @@ public class Evaluator {
 
 	Evaluator(GetAnnos getAnnos) {
 		this.getAnnos = getAnnos;
-		executor.setTypes(Map.class);
-		executor.setItemType(Map.class);
 		this.links = parse(getAnnos.getLinks());
 		if (getAnnos.getEmbedded() != null)
 			this.embeddedLinks = parse(getAnnos.getEmbedded().getLinks());
@@ -45,7 +43,7 @@ public class Evaluator {
 		return parsed;
 	}
 	
-	public List<Map<String, String>> evaluateLinks(Map response) {
+	public List<Map<String, String>> evaluateLinks(Object response) {
 		if (links == null)
 			return null;
 		return getLinks(response, null, links);
@@ -57,7 +55,7 @@ public class Evaluator {
 		return getLinks(response, item, embeddedLinks);
 	}
 	
-	public List<Map<String, String>> getLinks(Map response, Map item, List<Map<String, List<Expression>>> linksType) {
+	public List<Map<String, String>> getLinks(Object response, Object item, List<Map<String, List<Expression>>> linksType) {
 		executor.setVars(response, item);
 		List<Map<String, String>> linkSet = new ArrayList();
 		for(Map<String, List<Expression>> link: linksType) {

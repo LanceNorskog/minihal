@@ -17,8 +17,6 @@ public class ELTest {
 		response = new Response();
 		item = new Item("");
 		base = new Executor();
-		base.setTypes(response.getClass());
-		base.setItemType(item.getClass());
 		base.setVars(response, item);
 	}
 

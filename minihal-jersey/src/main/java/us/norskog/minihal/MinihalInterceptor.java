@@ -51,7 +51,7 @@ public class MinihalInterceptor implements WriterInterceptor {
 		Map<String, Object> response = h.convertToMap(context.getEntity());
 		init(context);
 		Evaluator e = evaluator;
-		List<Map<String, String>> expanded = evaluator.evaluateLinks(response);
+		List<Map<String, String>> expanded = evaluator.evaluateLinks(context.getEntity());
 		if (expanded != null) {
 			response.put("_links", expanded);
 		}
