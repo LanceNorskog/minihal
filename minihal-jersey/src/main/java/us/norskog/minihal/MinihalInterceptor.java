@@ -7,8 +7,11 @@ import javax.ws.rs.ext.WriterInterceptorContext;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Jersey Interceptor for Minihal links unpacker
@@ -25,8 +28,8 @@ public class MinihalInterceptor implements WriterInterceptor {
 	public static final String HAL = "application/hal+json";
 
 	static Handler handler = new Handler();
-	static GetAnnos getAnnos;
-	static Evaluator evaluator;
+	static Set<ParsedLinkSet> annoSet = new HashSet<ParsedLinkSet>();
+	static Map<ParsedLinkSet, Evaluator> evaluators = new HashMap<ParsedLinkSet, Evaluator>();;
 
 	public MinihalInterceptor() {
 		System.err.println("MinihalInterceptor created");
@@ -40,17 +43,21 @@ public class MinihalInterceptor implements WriterInterceptor {
 			context.proceed();
 			return;
 		}
-		dumpContext(context);
+		ParsedLinkSet parsedLinkSet = ParsedLinkSet.getParsedLinkSet(context.getAnnotations());
+		if (parsedLinkSet == null) {
+			context.proceed();
+			return;
+		}
+//		dumpContext(context);
 		Object ob = context.getEntity();
-		if (ob == null)
-			System.err.println("\tEntity object is null!");
-		else
-			System.err.println("\tEntity type: " + ob.getClass().getCanonicalName().toString());
+//		if (ob == null)
+//			System.err.println("\tEntity object is null!");
+//		else
+//			System.err.println("\tEntity type: " + ob.getClass().getCanonicalName().toString());
 
 		Handler h = new Handler();
 		Map<String, Object> response = h.convertToMap(context.getEntity());
-		init(context);
-		Evaluator e = evaluator;
+		Evaluator evaluator = init(parsedLinkSet);
 		List<Map<String, String>> expanded = evaluator.evaluateLinks(response);
 		if (expanded != null) {
 			response.put("_links", expanded);
@@ -60,15 +67,15 @@ public class MinihalInterceptor implements WriterInterceptor {
 		context.proceed();
 	}
 
-	private void init(WriterInterceptorContext context) {
-		if (getAnnos == null) {
+	private Evaluator init(ParsedLinkSet parsedLinkSet) {
+		if (! evaluators.containsKey(parsedLinkSet)) {
 			// idempotent race condition v.s. synchronized in every call 
 			synchronized(MinihalInterceptor.class) {
-				getAnnos = new GetAnnos(context.getAnnotations());
-				evaluator = new Evaluator(getAnnos);
+				Evaluator evaluator = new Evaluator(parsedLinkSet);
+				evaluators.put(parsedLinkSet, evaluator);
 			}
 		}
-
+		return evaluators.get(parsedLinkSet);
 	}
 
 	void dumpContext(WriterInterceptorContext context) {

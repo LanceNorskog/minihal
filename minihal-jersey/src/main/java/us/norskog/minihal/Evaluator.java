@@ -15,15 +15,15 @@ import java.util.Map;
 public class Evaluator {
 	Executor executor = new Executor();
 
-	private final GetAnnos getAnnos;
+	private final ParsedLinkSet parsedLinkSet;
 	private List<Map<String, List<Expression>>> links;
 	private List<Map<String, List<Expression>>> embeddedLinks = null;
 
-	Evaluator(GetAnnos getAnnos) {
-		this.getAnnos = getAnnos;
-		this.links = parse(getAnnos.getLinks());
-		if (getAnnos.getEmbedded() != null)
-			this.embeddedLinks = parse(getAnnos.getEmbedded().getLinks());
+	Evaluator(ParsedLinkSet parsedLinkSet) {
+		this.parsedLinkSet = parsedLinkSet;
+		this.links = parse(parsedLinkSet.getLinks());
+		if (parsedLinkSet.getEmbedded() != null)
+			this.embeddedLinks = parse(parsedLinkSet.getEmbedded().getLinks());
 	}
 
 	public List<Map<String, List<Expression>>> parse(List<LinkStore> linkStore) {

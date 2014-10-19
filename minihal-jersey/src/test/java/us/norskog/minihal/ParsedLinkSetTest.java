@@ -7,7 +7,7 @@ import java.lang.reflect.Method;
 
 import org.junit.Test;
 
-public class GetAnnosTest {
+public class ParsedLinkSetTest {
 
 	@Test
 	public void test() throws NoSuchMethodException, SecurityException {
@@ -16,8 +16,9 @@ public class GetAnnosTest {
 		Method getAll = e.getClass().getMethod("getAll", new Class[0]);
 		Annotation[] linksAnnos = getLinks.getAnnotations();
 		Annotation[] allAnnos = getAll.getAnnotations();
-		GetAnnos getAnnosLinks = new GetAnnos(linksAnnos);
-		GetAnnos getAnnosAll = new GetAnnos(allAnnos);
+		ParsedLinkSet parsedLinkSetLinks = new ParsedLinkSet(linksAnnos);
+		ParsedLinkSet parsedLinkSetAll = new ParsedLinkSet(allAnnos);
+		// TODO: more here I guess
 	}
 
 }

@@ -2,6 +2,7 @@ package us.norskog.minihal;
 
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,20 +12,20 @@ import java.util.Map;
  * into named objects.
  */
 
-public class GetAnnos {
+public class ParsedLinkSet {
 	public final static String REL = "rel";
 	public final static String TITLE = "title";
 	public final static String HREF = "href";
+	private final static Map<Annotation[], ParsedLinkSet> parsedLinks = new HashMap<Annotation[], ParsedLinkSet>();
 
-	private Annotation anno = null;
-	private List<LinkStore> links = new ArrayList<LinkStore>();
+	private Annotation[] annos;
+	private List<LinkStore> links;
 	private EmbeddedStore embedded = null;
 
-	public GetAnnos(Annotation[] annos) {
-
+	public ParsedLinkSet(Annotation[] annos) {
+		this.annos = annos;
 		for(Annotation anno: annos) {
 			if (anno.annotationType().equals(Links.class)) {
-				this.anno = anno;
 				Links linksAnno = (Links) anno;
 				LinkSet linkset = linksAnno.linkset();
 				links = new ArrayList<LinkStore>();
@@ -70,6 +71,40 @@ public class GetAnnos {
 	public EmbeddedStore getEmbedded() {
 		return embedded;
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (! (obj instanceof ParsedLinkSet))
+			return false;
+		return Arrays.equals(annos, ((ParsedLinkSet) obj).annos);
+	}
+	
+	@Override
+	public int hashCode() {
+		return Arrays.hashCode(annos);
+	}
+	
+	public static ParsedLinkSet getParsedLinkSet(Annotation[] annos) {
+		if (parsedLinks.containsKey(annos)) {
+			return parsedLinks.get(annos);
+		}
+		if (hasLinks(annos)) {
+			ParsedLinkSet ga = new ParsedLinkSet(annos);
+			parsedLinks.put(annos, ga);
+		} else {
+			parsedLinks.put(annos, null);
+		}
+		return parsedLinks.get(annos);
+	}
+	
+	private static boolean hasLinks(Annotation[] annos) {
+		for(Annotation anno: annos) {
+			if (anno.annotationType().equals(Links.class)) {
+				return true;
+			}
+		}
+		return false;
+	}
 
 }
 
@@ -77,9 +112,9 @@ class LinkStore {
 	private Map<String,String> parts = new HashMap<String, String>();
 
 	public LinkStore(String rel, String title, String href) {
-		parts.put(GetAnnos.REL, rel);
-		parts.put(GetAnnos.TITLE, title);
-		parts.put(GetAnnos.HREF, href);
+		parts.put(ParsedLinkSet.REL, rel);
+		parts.put(ParsedLinkSet.TITLE, title);
+		parts.put(ParsedLinkSet.HREF, href);
 	}
 
 	public void addPart(String key, String value) {
