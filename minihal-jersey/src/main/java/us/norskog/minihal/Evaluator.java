@@ -56,7 +56,9 @@ public class Evaluator {
 	}
 	
 	public List<Map<String, String>> getLinks(Object response, Object item, List<Map<String, List<Expression>>> linksType) {
-		executor.setVars(response, item);
+		executor.setVar("response", response);
+		if (item != null)
+			executor.setVar("item", item);
 		List<Map<String, String>> linkSet = new ArrayList();
 		for(Map<String, List<Expression>> link: linksType) {
 			Map<String, String> linkSetPart = new HashMap<String, String>();

@@ -5,10 +5,13 @@ import de.odysseus.el.util.SimpleResolver;
 
 import javax.el.ExpressionFactory;
 import javax.el.ValueExpression;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Implement EL actions for response and item.
@@ -21,33 +24,29 @@ import java.util.List;
  */
 public class Executor {
 
-	private ExpressionFactory factory;
-	private SimpleContext context;
-	private ValueExpression responseValue;
-	private ValueExpression itemValue;
+	private final ExpressionFactory factory;
+	private final SimpleContext context;
+	Map<String,ValueExpression> valueExprs = new HashMap<String, ValueExpression>();
+//	private ValueExpression responseValue;
+//	private ValueExpression itemValue;
 
 	public Executor() {
 		//        System.setProperty("javax.el.methodInvocations", "false");
 		factory = new de.odysseus.el.ExpressionFactoryImpl();
+		context = new SimpleContext(new SimpleResolver());
 	}
 
-	void setTypes(Object response, Object item) {
-		if (responseValue == null) {
+	ValueExpression setType(String name, Class valueClass) {
+		if (! valueExprs.containsKey(name)) {
 			// cache response evaluator
-			context = new SimpleContext(new SimpleResolver());
-			responseValue = factory.createValueExpression(context, "#{response}", response.getClass());
+			valueExprs.put(name, factory.createValueExpression(context, "#{" + name + "}", valueClass));
 		}
-		if (item != null && itemValue == null) {
-			itemValue = factory.createValueExpression(context, "#{item}", item.getClass());
-		}
+		return valueExprs.get(name);
 	}
 
-	public Object setVars(Object response, Object item) {
-		setTypes(response, item);
-		responseValue.setValue(context, response);
-		if (item != null)
-			itemValue.setValue(context, item);
-		return null;
+	public void setVar(String name, Object value) {
+		ValueExpression valueExpr = setType(name, value.getClass());
+		valueExpr.setValue(context, value);
 	}
 
 	private Object eval(String given) {
@@ -74,14 +73,13 @@ public class Executor {
 		return cooked;
 	}
 
-	public List<Object> getItems(String items) {
-		Object raw = eval(items);
-		System.out.println("Class of " + items + ": " + raw.getClass());
+	public List<Object> getList(String selector) {
+		Object raw = eval(selector);
+		System.out.println("Class of " + selector + ": " + raw.getClass());
 		if (raw instanceof List)
 			return (List<Object>) raw;
 		if (raw.getClass().isArray()) {
 			Object[] obs = (Object[]) raw;
-			System.out.println("Items in array: " + obs.length);
 			List<Object> list = new ArrayList<Object>();
 			for(int i = 0; i < obs.length; i++) {
 				list.add(i, obs[i]);
@@ -96,13 +94,14 @@ public class Executor {
 		return Collections.emptyList();
 	}
 
-	public List<String> expandItems(List<Object> itemList, String itemExpr) {
+	public List<String> expandList(String selector, List<Object> itemList, String expr) {
 		List<String> embedded = new ArrayList<String>();
 		if (itemList.size() == 0)
 			return embedded;
+		ValueExpression itemValueExpr = valueExprs.get(selector);
 		for(Object item: itemList) {
-			itemValue.setValue(context, item);
-			String embed = evalExpr(itemExpr);
+			itemValueExpr.setValue(context, item);
+			String embed = evalExpr(expr);
 			embedded.add(embed);
 		}
 		return embedded;
