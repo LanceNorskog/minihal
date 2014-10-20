@@ -78,17 +78,28 @@ public class MinihalInterceptor implements WriterInterceptor {
 							System.err.println("First item: " + obs[0].toString());
 						}
 						for(int i = 0; i < obs.length; i++) {
-							List<Map<String, String>> links = evaluator.evaluateEmbeddedItem(store.getName(), response, obs[i]);
+							KV kv = new KV(Integer.toString(i), obs[i]);
+							List<Map<String, String>> links = evaluator.evaluateEmbeddedItem(store.getName(), response, kv);
 							embeddedLinks.add(links);
 						}
-					} else if (items instanceof Collection) {
-						for(Object ob: (Collection) items) {
-							List<Map<String, String>> links = evaluator.evaluateEmbeddedItem(store.getName(), response, ob);
+					} else if (items instanceof Map) {
+						for(Object key: ((Map<String,Object>) items).keySet()) {
+							KV kv = new KV(key.toString(), ((Map) items).get(key.toString()));
+							List<Map<String, String>> links = evaluator.evaluateEmbeddedItem(store.getName(), response, kv);
 							embeddedLinks.add(links);						
+						}
+					} else if (items instanceof Collection) {
+						int i = 0;
+						for(Object ob: (Collection) items) {
+							KV kv = new KV(Integer.toString(i), ob);
+							List<Map<String, String>> links = evaluator.evaluateEmbeddedItem(store.getName(), response, kv);
+							embeddedLinks.add(links);		
+							i++;
 						}
 					} else {
 						System.err.println("Item not a list or array: " + items.toString());
-						List<Map<String, String>> links = evaluator.evaluateEmbeddedItem(store.getName(), response, items);
+						KV kv = new KV("0", items);
+						List<Map<String, String>> links = evaluator.evaluateEmbeddedItem(store.getName(), response, kv);
 						embeddedLinks.add(links);
 					}
 				}

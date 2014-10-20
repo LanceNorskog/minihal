@@ -77,8 +77,8 @@ public class HelloWorldResource {
 			@Link(rel = "self", href = "/helloworld/value", title = "Self"),
 			@Link(rel = "first", href = "/helloworld/value?id=${response.first}", title = "First") }), 
 			embedded = {
-			@Embedded(name = "Listicle", path = "${response.list}", links = @LinkSet(links = { @Link(rel = "only", href = "/helloworld/value?id=${item}", title = "#${item}") })),
-			@Embedded(name = "Mappacious", path = "${response.map}", links = @LinkSet(links = { @Link(rel = "only", href = "/helloworld/value?id=${item}", title = "#${item}") })) })
+		@Embedded(name = "Listicle", path = "${response.list}", links = @LinkSet(links = { @Link(rel = "only", href = "/helloworld/value?id=${item.value}", title = "id ${item.key}") })),
+		@Embedded(name = "Mappacious", path = "${response.map}", links = @LinkSet(links = { @Link(rel = "only", href = "/helloworld/value?id=${item.value}", title = "id ${item.key}") })) })
 
 	@Produces({"application/hal+json",MediaType.APPLICATION_JSON})
 	public Value getHello() {
