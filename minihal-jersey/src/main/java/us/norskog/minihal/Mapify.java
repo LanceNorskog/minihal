@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.apache.commons.beanutils.BeanUtils;
 
@@ -13,11 +14,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 /*
  * Convert arbitrary object into map.
- * Uses Apache BeanUtils. Could hacked to simple reflection to avoid a dependency.
+ *  Uses Jackson. Should use something else or just custom thing for reflection.
+ * 
  */
 
-public class Handler {
-	private static final Map<String,Object> mapclass = new HashMap<String, Object>();
+public class Mapify {
+	private static final Map<String,Object> mapclass = new TreeMap<String, Object>();
 
 	public Map<String, Object> convertToMap(Object obj) {	
 		Map<String, Object> objectAsMap;

@@ -1,9 +1,5 @@
 package us.norskog.minihal;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-
 /*
  * Endpoint test for links
  */
@@ -23,7 +19,7 @@ public class Endpoint {
 			links = {
 					@Link(rel = "self", href = "/", title = "Self") }
 			),
-			embedded = @Embedded(path = "thing.thing2", links = 
+			embedded = @Embedded(name = "thing2", path = "thing.thing2", links = 
 			@LinkSet(
 					links = {
 							@Link(rel = "self", href = "/", title = "Self") }

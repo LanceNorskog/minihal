@@ -25,7 +25,7 @@ import java.util.Map;
 public class Executor {
 
 	private final ExpressionFactory factory;
-	private final SimpleContext context;
+	private SimpleContext context;
 	Map<String,ValueExpression> valueExprs = new HashMap<String, ValueExpression>();
 //	private ValueExpression responseValue;
 //	private ValueExpression itemValue;
@@ -33,10 +33,15 @@ public class Executor {
 	public Executor() {
 		//        System.setProperty("javax.el.methodInvocations", "false");
 		factory = new de.odysseus.el.ExpressionFactoryImpl();
+		clear();
+	}
+	
+	public void clear() {
 		context = new SimpleContext(new SimpleResolver());
+		valueExprs.clear();
 	}
 
-	ValueExpression setType(String name, Class valueClass) {
+	private ValueExpression setType(String name, Class valueClass) {
 		if (! valueExprs.containsKey(name)) {
 			// cache response evaluator
 			valueExprs.put(name, factory.createValueExpression(context, "#{" + name + "}", valueClass));
@@ -63,14 +68,15 @@ public class Executor {
 		}
 	}
 
-	public String evalExpr(String single) {
+	public Object evalExpr(String single) {
 		Object raw = eval(single);
-		if (raw == null)
-			return null;
-		System.out.println("Class of " + single + ": " + raw.getClass());
-		String cooked = raw.toString();
-		System.out.println("Value of " + single + ": " + cooked);
-		return cooked;
+		return raw;
+//		if (raw == null)
+//			return null;
+//		System.out.println("Class of " + single + ": " + raw.getClass());
+//		String cooked = raw.toString();
+//		System.out.println("Value of " + single + ": " + cooked);
+//		return cooked;
 	}
 
 	public List<Object> getList(String selector) {
@@ -94,16 +100,16 @@ public class Executor {
 		return Collections.emptyList();
 	}
 
-	public List<String> expandList(String selector, List<Object> itemList, String expr) {
-		List<String> embedded = new ArrayList<String>();
-		if (itemList.size() == 0)
-			return embedded;
-		ValueExpression itemValueExpr = valueExprs.get(selector);
-		for(Object item: itemList) {
-			itemValueExpr.setValue(context, item);
-			String embed = evalExpr(expr);
-			embedded.add(embed);
-		}
-		return embedded;
-	}
+//	public List<String> expandList(String selector, List<Object> itemList, String expr) {
+//		List<Object> embedded = new ArrayList<String>();
+//		if (itemList.size() == 0)
+//			return embedded;
+//		ValueExpression itemValueExpr = valueExprs.get(selector);
+//		for(Object item: itemList) {
+//			itemValueExpr.setValue(context, item);
+//			String embed = evalExpr(expr);
+//			embedded.add(embed);
+//		}
+//		return embedded;
+//	}
 }

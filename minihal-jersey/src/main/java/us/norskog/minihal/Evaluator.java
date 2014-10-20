@@ -17,13 +17,18 @@ public class Evaluator {
 
 	private final ParsedLinkSet parsedLinkSet;
 	private List<Map<String, List<Expression>>> links;
-	private List<Map<String, List<Expression>>> embeddedLinks = null;
+	private Map<String,List<Map<String, List<Expression>>>> embeddedLinks = null;
 
 	Evaluator(ParsedLinkSet parsedLinkSet) {
 		this.parsedLinkSet = parsedLinkSet;
 		this.links = parse(parsedLinkSet.getLinks());
-		if (parsedLinkSet.getEmbedded() != null)
-			this.embeddedLinks = parse(parsedLinkSet.getEmbedded().getLinks());
+		Map<String, EmbeddedStore> embeddedMap = parsedLinkSet.getEmbeddedMap();
+		if (embeddedMap != null) {
+			this.embeddedLinks = new HashMap<String, List<Map<String,List<Expression>>>>();
+			for(EmbeddedStore store: embeddedMap.values()) {
+				embeddedLinks.put(store.getName(), parse(store.getLinks()));
+			}
+		}
 	}
 
 	public List<Map<String, List<Expression>>> parse(List<LinkStore> linkStore) {
@@ -43,45 +48,57 @@ public class Evaluator {
 		return parsed;
 	}
 	
+	public Object evaluateExpr(String expr) {
+		Object ob = executor.evalExpr(expr);
+		return ob;
+	}
+	
 	public List<Map<String, String>> evaluateLinks(Object response) {
 		if (links == null)
 			return null;
 		return getLinks(response, null, links);
 	}
 	
-	public List<Map<String, String>> evaluateEmbeddedLinks(Map response, Map item) {
+	public List<Map<String, String>> evaluateEmbeddedItem(String name, Object response, Object item) {
 		if (links == null || embeddedLinks == null)
 			return null;
-		return getLinks(response, item, embeddedLinks);
+		return getLinks(response, item, embeddedLinks.get(name));
 	}
 	
 	public List<Map<String, String>> getLinks(Object response, Object item, List<Map<String, List<Expression>>> linksType) {
 		executor.setVar("response", response);
 		if (item != null)
 			executor.setVar("item", item);
-		List<Map<String, String>> linkSet = new ArrayList();
+		List<Map<String, String>> linkSet = new ArrayList<Map<String, String>>();
 		for(Map<String, List<Expression>> link: linksType) {
-			Map<String, String> linkSetPart = new HashMap<String, String>();
-			for(String linkParts: link.keySet()) {
-				StringBuilder sb = new StringBuilder();
-				for(Expression expression: link.get(linkParts)) {
-					String value = expression.eval(executor).toString();	
-					sb.append(value);
-				}
-				linkSetPart.put(linkParts, sb.toString());
-			}
-			linkSet.add(linkSetPart);
+			Map<String, String> linkSetPart = getLinkSet(link);
+			if (linkSetPart != null)
+				linkSet.add(linkSetPart);
 		}
-		
 		return linkSet;
+	}
 
+	private Map<String, String> getLinkSet(Map<String, List<Expression>> link) {
+		Map<String, String> linkSetPart = new HashMap<String, String>();
+		for(String linkParts: link.keySet()) {
+			StringBuilder sb = new StringBuilder();
+			for(Expression expression: link.get(linkParts)) {
+				Object evaluated = expression.eval(executor);
+				if (evaluated == null)
+					return null;
+				String value = evaluated.toString();	
+				sb.append(value);
+			}
+			linkSetPart.put(linkParts, sb.toString());
+		}
+		return linkSetPart;
 	}
 
 	public List<Map<String, List<Expression>>> getLinks() {
 		return links;
 	}
 
-	public List<Map<String, List<Expression>>> getEmbeddedLinks() {
+	public Map<String, List<Map<String, List<Expression>>>> getEmbeddedLinks() {
 		return embeddedLinks;
 	}
 

@@ -18,7 +18,7 @@ public class ExecutorTest {
 	Map<String,Object> map;
 	Response response;
 	Item item;
-	Executor base;
+	Executor base = new Executor();
 
 	@Before
 	public void setUp() throws Exception {
@@ -35,18 +35,18 @@ public class ExecutorTest {
 		
 		response = new Response();
 		item = new Item("");
-		base = new Executor();
 		setVars(base);
 	}
 
 	private void setVars(Executor executor) {
+		executor.clear();
 		executor.setVar("response", response);
 		executor.setVar("item", item);
 	}
 
 	@Test
 	public void response() {
-		String abc = base.evalExpr("${abc}");
+		Object abc = base.evalExpr("${abc}");
 		Assert.assertNull( abc);
 		abc = base.evalExpr("${response.q}");
 		Assert.assertEquals("monkeys", abc);
@@ -58,16 +58,16 @@ public class ExecutorTest {
 
 	@Test
 	public void map() {
-		Executor mapbase = new Executor();
-		mapbase.setVar("response", map);
+		base.clear();
+		base.setVar("response", map);
 
-		String abc = mapbase.evalExpr("${abc}");
+		Object abc = base.evalExpr("${abc}");
 		Assert.assertNull( abc);
-		abc = mapbase.evalExpr("${response.q}");
+		abc = base.evalExpr("${response.q}");
 		Assert.assertEquals("monkeys", abc);
-		abc = mapbase.evalExpr("${response.rows}");
+		abc = base.evalExpr("${response.rows}");
 		Assert.assertEquals("10", abc);
-		abc = mapbase.evalExpr("${response.rows * 2}");
+		abc = base.evalExpr("${response.rows * 2}");
 		Assert.assertEquals("20", abc);
 		getItems();
 	}
@@ -95,30 +95,31 @@ public class ExecutorTest {
 //		Executor executor = new Executor();
 //		Iterator<Object> iter = items.iterator();
 //		Object first = iter.next();
-//		base.setVar("response", first);
+//		base.clear();
+//		base.setVar("item", first);
 //		String a = base.evalExpr("${item.value}");
 //		Assert.assertEquals("A1", a);
-//		base.setVars(response, first);
+//		base.setVar("response", first);
 //		a = base.evalExpr("${item.value}");
 //		Assert.assertEquals("A2", a);
 //		Assert.assertFalse(iter.hasNext());
 //		items = base.getList("${response.itemList}");
 //		Assert.assertNotNull(items);
 //		iter = items.iterator();
-//		base.setVars(response, first);
+//		base.setVar("item", first);
 //		String b = base.evalExpr("${item.value}");
 //		Assert.assertEquals("B1", b);
-//		base.setVars(response, first);
+//		base.setVar("item", first);
 //		b = base.evalExpr("${item.value}");
 //		Assert.assertEquals("B2", b);
 //		Assert.assertFalse(iter.hasNext());
 //
 //	}
-//
+
 //	@Test
 //	public void fetchEmbedded() {
 //		List<Object> itemList = base.getList("${response.itemArray}");
-//		List<String> items = base.expandList(itemList, "${item.value}");
+//		List<String> items = base.expandList("${response.itemArray}", response, "${item.value}");
 //		Assert.assertNotNull(items);
 //		Iterator<String> iter = items.iterator();
 //		Assert.assertEquals("A1", iter.next());

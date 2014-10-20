@@ -7,6 +7,9 @@ import javax.ws.rs.ext.WriterInterceptorContext;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -27,7 +30,7 @@ import java.util.Set;
 public class MinihalInterceptor implements WriterInterceptor {
 	public static final String HAL = "application/hal+json";
 
-	static Handler handler = new Handler();
+	static Mapify mapifier = new Mapify();
 	static Set<ParsedLinkSet> annoSet = new HashSet<ParsedLinkSet>();
 	static Map<ParsedLinkSet, Evaluator> evaluators = new HashMap<ParsedLinkSet, Evaluator>();;
 
@@ -39,7 +42,8 @@ public class MinihalInterceptor implements WriterInterceptor {
 	public void aroundWriteTo(WriterInterceptorContext context)
 			throws IOException, WebApplicationException {
 		System.err.println("MinihalInterceptor called");
-		if (! context.getMediaType().toString().equals(HAL)) {
+		Object entity = context.getEntity();
+		if (! context.getMediaType().toString().equals(HAL) || entity == null) {
 			context.proceed();
 			return;
 		}
@@ -48,23 +52,54 @@ public class MinihalInterceptor implements WriterInterceptor {
 			context.proceed();
 			return;
 		}
-//		dumpContext(context);
-		Object ob = context.getEntity();
-//		if (ob == null)
-//			System.err.println("\tEntity object is null!");
-//		else
-//			System.err.println("\tEntity type: " + ob.getClass().getCanonicalName().toString());
 
-		Handler h = new Handler();
-		Map<String, Object> response = h.convertToMap(context.getEntity());
+		Map<String, Object> response = mapifier.convertToMap(entity);
+		evaluate(parsedLinkSet, response);
+		System.err.println("map: " + response.toString());
+		context.setEntity(response);
+		context.proceed();
+	}
+
+	private void evaluate(ParsedLinkSet parsedLinkSet,
+			Map<String, Object> response) {
 		Evaluator evaluator = init(parsedLinkSet);
 		List<Map<String, String>> expanded = evaluator.evaluateLinks(response);
 		if (expanded != null) {
 			response.put("_links", expanded);
+			Map<String, EmbeddedStore> storeMap = parsedLinkSet.getEmbeddedMap();
+			Map itemChunk = new HashMap();
+			for(EmbeddedStore store: storeMap.values()) {
+				List embeddedLinks = new ArrayList();
+				if (store.getPath() != null) {
+					Object items = evaluator.evaluateExpr(store.getPath());
+					if (items.getClass().isArray()) {
+						Object[] obs = (Object[]) items;
+						if (obs.length > 0) {
+							System.err.println("First item: " + obs[0].toString());
+						}
+						for(int i = 0; i < obs.length; i++) {
+							List<Map<String, String>> links = evaluator.evaluateEmbeddedItem(store.getName(), response, obs[i]);
+							embeddedLinks.add(links);
+						}
+					} else if (items instanceof Collection) {
+						for(Object ob: (Collection) items) {
+							List<Map<String, String>> links = evaluator.evaluateEmbeddedItem(store.getName(), response, ob);
+							embeddedLinks.add(links);						
+						}
+					} else {
+						System.err.println("Item not a list or array: " + items.toString());
+						List<Map<String, String>> links = evaluator.evaluateEmbeddedItem(store.getName(), response, items);
+						embeddedLinks.add(links);
+					}
+				}
+				itemChunk.put(store.getName(), embeddedLinks);
+			}
+			response.put("_embedded", itemChunk);
 		}
-		System.err.println("map: " + response.toString());
-		context.setEntity(response);
-		context.proceed();
+	}
+
+	private boolean isEmpty(List links) {
+		return links.size() > 0;
 	}
 
 	private Evaluator init(ParsedLinkSet parsedLinkSet) {

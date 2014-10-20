@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /*
  * Unpack Links/Link/Embedded annotation structure
@@ -16,11 +17,11 @@ public class ParsedLinkSet {
 	public final static String REL = "rel";
 	public final static String TITLE = "title";
 	public final static String HREF = "href";
-	private final static Map<Annotation[], ParsedLinkSet> parsedLinks = new HashMap<Annotation[], ParsedLinkSet>();
+	private final static Map<Annotation[], ParsedLinkSet> parsedLinks = new ConcurrentHashMap<Annotation[], ParsedLinkSet>();
 
 	private Annotation[] annos;
 	private List<LinkStore> links;
-	private EmbeddedStore embedded = null;
+	private Map<String,EmbeddedStore> embeddedMap = null;
 
 	public ParsedLinkSet(Annotation[] annos) {
 		this.annos = annos;
@@ -30,11 +31,14 @@ public class ParsedLinkSet {
 				LinkSet linkset = linksAnno.linkset();
 				links = new ArrayList<LinkStore>();
 				storeLinks(linkset, links);
-				if (linksAnno.embedded().length == 1) {
-					Embedded embedded = (Embedded) linksAnno.embedded()[0];
-					storeEmbedded(embedded);
-				} else if (linksAnno.embedded().length > 1)
-						throw new IllegalArgumentException();
+				Embedded[] embeddedAnno = linksAnno.embedded();
+				if (embeddedAnno.length > 0) {
+					embeddedMap = new HashMap<String, EmbeddedStore>();
+					for(int i = 0; i < embeddedAnno.length; i++) {
+						Embedded embedded = embeddedAnno[i];
+						storeEmbedded(embedded);
+					}
+				} 
 				this.hashCode();
 				break;
 			}
@@ -44,7 +48,7 @@ public class ParsedLinkSet {
 	private void storeEmbedded(Embedded embedded) {
 		List<LinkStore> embeddedLinks = new ArrayList<LinkStore>();
 		storeLinks(embedded.links(), embeddedLinks);
-		this.embedded = new EmbeddedStore(embedded.path(), embeddedLinks);
+		embeddedMap.put(embedded.name(), new EmbeddedStore(embedded.name(), embedded.path(), embeddedLinks));
 	}
 
 	private void storeLinks(LinkSet linkset, List<LinkStore> links) {
@@ -68,22 +72,22 @@ public class ParsedLinkSet {
 		return links;
 	}
 
-	public EmbeddedStore getEmbedded() {
-		return embedded;
+	public Map<String,EmbeddedStore> getEmbeddedMap() {
+		return embeddedMap;
 	}
-	
+
 	@Override
 	public boolean equals(Object obj) {
 		if (! (obj instanceof ParsedLinkSet))
 			return false;
 		return Arrays.equals(annos, ((ParsedLinkSet) obj).annos);
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return Arrays.hashCode(annos);
 	}
-	
+
 	public static ParsedLinkSet getParsedLinkSet(Annotation[] annos) {
 		if (parsedLinks.containsKey(annos)) {
 			return parsedLinks.get(annos);
@@ -96,7 +100,7 @@ public class ParsedLinkSet {
 		}
 		return parsedLinks.get(annos);
 	}
-	
+
 	private static boolean hasLinks(Annotation[] annos) {
 		for(Annotation anno: annos) {
 			if (anno.annotationType().equals(Links.class)) {
@@ -127,13 +131,18 @@ class LinkStore {
 }
 
 class EmbeddedStore {
-	String path;
+	private final String name;
+	private final String path;
+	private final List<LinkStore> links;
 
-	List<LinkStore> links;
-
-	public EmbeddedStore(String path, List<LinkStore> links) {
+	public EmbeddedStore(String name, String path, List<LinkStore> links) {
+		this.name = name;
 		this.path = path;
 		this.links = links;
+	}
+
+	public String getName() {
+		return name;
 	}
 
 	public String getPath() {
@@ -143,4 +152,5 @@ class EmbeddedStore {
 	public List<LinkStore> getLinks() {
 		return links;
 	}
+
 }
