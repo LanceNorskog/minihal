@@ -9,7 +9,7 @@ import javax.el.ValueExpression;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -26,12 +26,9 @@ public class Executor {
 
 	private final ExpressionFactory factory;
 	private SimpleContext context;
-	Map<String,ValueExpression> valueExprs = new HashMap<String, ValueExpression>();
-//	private ValueExpression responseValue;
-//	private ValueExpression itemValue;
+	Map<String,ValueExpression> valueExprs = new LinkedHashMap<String, ValueExpression>();
 
 	public Executor() {
-		//        System.setProperty("javax.el.methodInvocations", "false");
 		factory = new de.odysseus.el.ExpressionFactoryImpl();
 		clear();
 	}
@@ -41,9 +38,8 @@ public class Executor {
 		valueExprs.clear();
 	}
 
-	private ValueExpression setType(String name, Class valueClass) {
+	private ValueExpression setType(String name, Class<? extends Object> valueClass) {
 		if (! valueExprs.containsKey(name)) {
-			// cache response evaluator
 			valueExprs.put(name, factory.createValueExpression(context, "#{" + name + "}", valueClass));
 		}
 		return valueExprs.get(name);

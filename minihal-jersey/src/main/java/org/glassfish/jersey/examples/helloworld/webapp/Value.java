@@ -1,7 +1,7 @@
 package org.glassfish.jersey.examples.helloworld.webapp;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -12,8 +12,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class Value {
 	String first = "one";
 	String second = "two";
+	String[] array = {"abc", "def"};
 	List<String> list = new ArrayList<String>();
-	Map<String, Integer> map = new HashMap<String, Integer>();
+	Map<String, Integer> map = new LinkedHashMap<String, Integer>();
 
 	public Value() {
 		list.add("ten");
@@ -23,7 +24,9 @@ public class Value {
 	}
 	
 	public String getFirst() { return first; }
-	public String getSecond() { return second; }
+	public String getSecond() { return second;}
+	public String[] getArray() { return array;}
+
 	public List<String> getList() { return list; }
 	public Map<String, Integer> getMap() {return map;}
 }

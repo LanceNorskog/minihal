@@ -1,7 +1,7 @@
 package us.norskog.minihal;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -15,17 +15,16 @@ import java.util.Map;
 public class Evaluator {
 	Executor executor = new Executor();
 
-	private final ParsedLinkSet parsedLinkSet;
 	private List<Map<String, List<Expression>>> links;
 	private Map<String,List<Map<String, List<Expression>>>> embeddedLinks = null;
 
 	Evaluator(ParsedLinkSet parsedLinkSet) {
-		this.parsedLinkSet = parsedLinkSet;
 		this.links = parse(parsedLinkSet.getLinks());
 		Map<String, EmbeddedStore> embeddedMap = parsedLinkSet.getEmbeddedMap();
 		if (embeddedMap != null) {
-			this.embeddedLinks = new HashMap<String, List<Map<String,List<Expression>>>>();
-			for(EmbeddedStore store: embeddedMap.values()) {
+			this.embeddedLinks = new LinkedHashMap<String, List<Map<String,List<Expression>>>>();
+			for(String name: embeddedMap.keySet()) {
+				EmbeddedStore store = embeddedMap.get(name);
 				embeddedLinks.put(store.getName(), parse(store.getLinks()));
 			}
 		}
@@ -34,7 +33,7 @@ public class Evaluator {
 	public List<Map<String, List<Expression>>> parse(List<LinkStore> linkStore) {
 		List<Map<String,List<Expression>>> parsed = new ArrayList<Map<String,List<Expression>>>();
 		for(LinkStore store: linkStore) {
-			Map<String, List<Expression>> link = new HashMap<String, List<Expression>>();
+			Map<String, List<Expression>> link = new LinkedHashMap<String, List<Expression>>();
 			for(String part: store.getParts().keySet()) {
 				Parser p = new Parser(store.getParts().get(part));
 				List<Expression> expressions = new ArrayList<Expression>();
@@ -79,7 +78,7 @@ public class Evaluator {
 	}
 
 	private Map<String, String> getLinkSet(Map<String, List<Expression>> link) {
-		Map<String, String> linkSetPart = new HashMap<String, String>();
+		Map<String, String> linkSetPart = new LinkedHashMap<String, String>();
 		for(String linkParts: link.keySet()) {
 			StringBuilder sb = new StringBuilder();
 			for(Expression expression: link.get(linkParts)) {

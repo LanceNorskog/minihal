@@ -1,12 +1,8 @@
 package us.norskog.minihal;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.TreeMap;
-
-import org.apache.commons.beanutils.BeanUtils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -19,20 +15,19 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 
 public class Mapify {
-	private static final Map<String,Object> mapclass = new TreeMap<String, Object>();
+	private static final Map<String,Object> mapclass = new LinkedHashMap<String, Object>();
+	// not sure if ThreadLocal needed. Have had weird probs with sharing Jackson in the past.
+	private static ThreadLocal<ObjectMapper> mappers = new ThreadLocal<ObjectMapper>();
 
 	public Map<String, Object> convertToMap(Object obj) {	
 		Map<String, Object> objectAsMap;
 		long start = System.currentTimeMillis();
-		// threadlocal or static this
-		ObjectMapper mapper = new ObjectMapper();
-		long delta = System.currentTimeMillis() - start;
-		if (delta > 0)
-			this.hashCode();
 		try {
 			byte[] b;
-			b = mapper.writeValueAsBytes(obj);
-			objectAsMap = mapper.readValue(b, mapclass.getClass());
+			if (mappers.get() == null)
+				mappers.set(new ObjectMapper());
+			b = mappers.get().writeValueAsBytes(obj);
+			objectAsMap = mappers.get().readValue(b, mapclass.getClass());
 			return objectAsMap;
 		} catch (JsonProcessingException e) {
 			// TODO Auto-generated catch block
@@ -82,7 +77,7 @@ public class Mapify {
 	//			
 	//		}
 	//			
-	//		Map<String, Object> objectAsMap = new HashMap<String, Object>();
+	//		Map<String, Object> objectAsMap = new LinkedHashMap<String, Object>();
 	//		BeanInfo info = Introspector.getBeanInfo(obj.getClass());
 	//		for (PropertyDescriptor pd : info.getPropertyDescriptors()) {
 	//			Method reader = pd.getReadMethod();
@@ -103,7 +98,7 @@ public class Mapify {
 	//			
 	//		}
 	//			
-	//		Map<String, Object> objectAsMap = new HashMap<String, Object>();
+	//		Map<String, Object> objectAsMap = new LinkedHashMap<String, Object>();
 	//		BeanInfo info = Introspector.getBeanInfo(obj.getClass());
 	//		for (PropertyDescriptor pd : info.getPropertyDescriptors()) {
 	//			Method reader = pd.getReadMethod();

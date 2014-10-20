@@ -8,13 +8,10 @@ import javax.ws.rs.ext.WriterInterceptorContext;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Jersey Interceptor for Minihal links unpacker
@@ -31,8 +28,7 @@ public class MinihalInterceptor implements WriterInterceptor {
 	public static final String HAL = "application/hal+json";
 
 	static Mapify mapifier = new Mapify();
-	static Set<ParsedLinkSet> annoSet = new HashSet<ParsedLinkSet>();
-	static Map<ParsedLinkSet, Evaluator> evaluators = new HashMap<ParsedLinkSet, Evaluator>();;
+	static Map<ParsedLinkSet, Evaluator> evaluators = new LinkedHashMap<ParsedLinkSet, Evaluator>();;
 
 	public MinihalInterceptor() {
 		System.err.println("MinihalInterceptor created");
@@ -67,11 +63,15 @@ public class MinihalInterceptor implements WriterInterceptor {
 		if (expanded != null) {
 			response.put("_links", expanded);
 			Map<String, EmbeddedStore> storeMap = parsedLinkSet.getEmbeddedMap();
-			Map itemChunk = new HashMap();
-			for(EmbeddedStore store: storeMap.values()) {
-				List embeddedLinks = new ArrayList();
+			Map<String, List<List<Map<String, String>>>> itemChunk = new LinkedHashMap<String, List<List<Map<String, String>>>>();
+			for(String name: storeMap.keySet()) {
+				EmbeddedStore store = storeMap.get(name);
+				List<List<Map<String, String>>> embeddedLinks = new ArrayList<List<Map<String, String>>>();
+				itemChunk.put(store.getName(), embeddedLinks);
 				if (store.getPath() != null) {
 					Object items = evaluator.evaluateExpr(store.getPath());
+					if (items == null)
+						continue;
 					if (items.getClass().isArray()) {
 						Object[] obs = (Object[]) items;
 						if (obs.length > 0) {
@@ -84,13 +84,13 @@ public class MinihalInterceptor implements WriterInterceptor {
 						}
 					} else if (items instanceof Map) {
 						for(Object key: ((Map<String,Object>) items).keySet()) {
-							KV kv = new KV(key.toString(), ((Map) items).get(key.toString()));
+							KV kv = new KV(key.toString(), ((Map<?, ?>) items).get(key.toString()));
 							List<Map<String, String>> links = evaluator.evaluateEmbeddedItem(store.getName(), response, kv);
 							embeddedLinks.add(links);						
 						}
 					} else if (items instanceof Collection) {
 						int i = 0;
-						for(Object ob: (Collection) items) {
+						for(Object ob: (Collection<?>) items) {
 							KV kv = new KV(Integer.toString(i), ob);
 							List<Map<String, String>> links = evaluator.evaluateEmbeddedItem(store.getName(), response, kv);
 							embeddedLinks.add(links);		
@@ -103,14 +103,9 @@ public class MinihalInterceptor implements WriterInterceptor {
 						embeddedLinks.add(links);
 					}
 				}
-				itemChunk.put(store.getName(), embeddedLinks);
 			}
 			response.put("_embedded", itemChunk);
 		}
-	}
-
-	private boolean isEmpty(List links) {
-		return links.size() > 0;
 	}
 
 	private Evaluator init(ParsedLinkSet parsedLinkSet) {

@@ -39,11 +39,6 @@
  */
 package org.glassfish.jersey.examples.helloworld.webapp;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import us.norskog.minihal.Embedded;
 import us.norskog.minihal.Link;
 import us.norskog.minihal.LinkSet;
@@ -53,10 +48,6 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-
-import org.glassfish.jersey.message.XmlHeader;
 
 /**
  * @author Pavel Bucek (pavel.bucek at oracle.com)
@@ -77,6 +68,10 @@ public class HelloWorldResource {
 			@Link(rel = "self", href = "/helloworld/value", title = "Self"),
 			@Link(rel = "first", href = "/helloworld/value?id=${response.first}", title = "First") }), 
 			embedded = {
+		@Embedded(name = "Constance", path = "hello", links = @LinkSet(links = { @Link(rel = "only", href = "/helloworld/value?id=${item.value}", title = "id ${item.key}") })),
+		@Embedded(name = "Nullz", path = "${x}", links = @LinkSet(links = { @Link(rel = "only", href = "/helloworld/value?id=${item.value}", title = "id ${item.key}") })),
+		@Embedded(name = "Objectificicated", path = "${response.first}", links = @LinkSet(links = { @Link(rel = "only", href = "/helloworld/value?id=${item.value}", title = "id ${item.key}") })),
+		@Embedded(name = "Arraysious", path = "${response.array}", links = @LinkSet(links = { @Link(rel = "only", href = "/helloworld/value?id=${item.value}", title = "id ${item.key}") })),
 		@Embedded(name = "Listicle", path = "${response.list}", links = @LinkSet(links = { @Link(rel = "only", href = "/helloworld/value?id=${item.value}", title = "id ${item.key}") })),
 		@Embedded(name = "Mappacious", path = "${response.map}", links = @LinkSet(links = { @Link(rel = "only", href = "/helloworld/value?id=${item.value}", title = "id ${item.key}") })) })
 

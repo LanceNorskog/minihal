@@ -3,7 +3,7 @@ package us.norskog.minihal;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -33,7 +33,7 @@ public class ParsedLinkSet {
 				storeLinks(linkset, links);
 				Embedded[] embeddedAnno = linksAnno.embedded();
 				if (embeddedAnno.length > 0) {
-					embeddedMap = new HashMap<String, EmbeddedStore>();
+					embeddedMap = new LinkedHashMap<String, EmbeddedStore>();
 					for(int i = 0; i < embeddedAnno.length; i++) {
 						Embedded embedded = embeddedAnno[i];
 						storeEmbedded(embedded);
@@ -113,7 +113,7 @@ public class ParsedLinkSet {
 }
 
 class LinkStore {
-	private Map<String,String> parts = new HashMap<String, String>();
+	private Map<String,String> parts = new LinkedHashMap<String, String>();
 
 	public LinkStore(String rel, String title, String href) {
 		parts.put(ParsedLinkSet.REL, rel);
