@@ -51,9 +51,9 @@ public class ExecutorTest {
 		abc = base.evalExpr("${response.q}");
 		Assert.assertEquals("monkeys", abc);
 		abc = base.evalExpr("${response.rows}");
-		Assert.assertEquals("10", abc);
+		Assert.assertEquals("10", abc.toString());
 		abc = base.evalExpr("${response.rows * 2}");
-		Assert.assertEquals("20", abc);
+		Assert.assertEquals("20", abc.toString());
 	}
 
 	@Test
@@ -66,9 +66,9 @@ public class ExecutorTest {
 		abc = base.evalExpr("${response.q}");
 		Assert.assertEquals("monkeys", abc);
 		abc = base.evalExpr("${response.rows}");
-		Assert.assertEquals("10", abc);
+		Assert.assertEquals("10", abc.toString());
 		abc = base.evalExpr("${response.rows * 2}");
-		Assert.assertEquals("20", abc);
+		Assert.assertEquals("20", abc.toString());
 		getItems();
 	}
 
